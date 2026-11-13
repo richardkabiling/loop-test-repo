@@ -670,36 +670,41 @@
     }
   ],
   "review": {
-    "default_venue": "both",
+    "default_venue": "pr",
     "artifacts": [
       {
         "artifact": "intent",
-        "venue": "pr",
-        "reviewers": [
-          {
-            "type": "human",
-            "role": "product-owner"
-          }
-        ],
-        "record": "PR review on the docs PR (intent.md)",
-        "blocking": "PO approval is the gate"
-      },
-      {
-        "artifact": "design",
-        "venue": "both",
+        "venue": "tracker",
         "reviewers": [
           {
             "type": "ai",
-            "how": "fresh-context reviewer subagent",
+            "how": "persona lenses (silent)",
             "when": "before the gate request"
           },
           {
             "type": "human",
-            "role": "product-owner"
+            "role": "team-member (not the driver)"
           }
         ],
-        "record": "AI findings resolved in spec.md 'Review log'; human review on the PR",
-        "blocking": "PO approval is the gate; AI review is advisory"
+        "record": "approval label/comment on the GitHub epic; intent.md committed",
+        "blocking": "human gate on the epic"
+      },
+      {
+        "artifact": "design",
+        "venue": "tracker",
+        "reviewers": [
+          {
+            "type": "ai",
+            "how": "fresh-context reviewer subagent + persona lenses",
+            "when": "before the gate request"
+          },
+          {
+            "type": "human",
+            "role": "team-member (not the driver)"
+          }
+        ],
+        "record": "AI findings resolved in spec.md 'Review log' and one summary comment on the epic; human approval on the epic",
+        "blocking": "human gate on the epic; AI review is advisory"
       },
       {
         "artifact": "plan",
@@ -712,7 +717,7 @@
           }
         ],
         "record": "plan.md 'Review log'; engineer notified with the plan link",
-        "blocking": "automated gate: AI review must report no blocking findings; escalates to the engineer for high-risk plans"
+        "blocking": "automated gate: AI review must report no blocking findings; escalates to the team for high-risk plans"
       },
       {
         "artifact": "validate",
@@ -732,7 +737,7 @@
         "reviewers": [
           {
             "type": "automated",
-            "how": "scripts/sdlc/pr-checks.sh (check-loop, protected paths, diff-guard, tier label) run by /sdlc-review; existing CI as it is",
+            "how": "scripts/sdlc/pr-checks.sh (check-loop, protected paths, diff-guard, tier label) run by /charmander-review",
             "when": "before review is requested"
           },
           {
@@ -742,23 +747,23 @@
           },
           {
             "type": "human",
-            "role": "code-owner"
+            "role": "team-member (not the driver)"
           }
         ],
         "record": "lens findings in reviews/ ledger and one summary comment on the PR; resolved threads",
-        "blocking": "approvals per PR tier via branch protection; AI reviewers never approve or block"
+        "blocking": "approvals per PR tier via branch protection/rulesets; this approval is the deploy gate (merge to main deploys); AI reviewers never approve or block"
       },
       {
         "artifact": "release",
         "venue": "pr",
         "reviewers": [
           {
-            "type": "human",
-            "role": "release-manager"
+            "type": "automated",
+            "how": "CD pipeline on merge to main: health checks, rollback"
           }
         ],
-        "record": "protected-environment approval",
-        "blocking": "release-manager approval"
+        "record": "CD run on main",
+        "blocking": "none beyond the approved PR; outside approvals are post-merge and out of scope"
       },
       {
         "artifact": "improve",
@@ -771,7 +776,7 @@
           },
           {
             "type": "human",
-            "role": "code-owner"
+            "role": "team-member (not the driver)"
           }
         ],
         "record": "harness PR with before/after eval results",
@@ -787,11 +792,42 @@
       "tiering": "scripts/sdlc/pr-tier.sh computes the tier; /<prefix>-review labels the PR; pr-checks.sh verifies the label",
       "tiers": [
         {
+          "id": "critical",
+          "match": [
+            "infra/**",
+            ".github/workflows/**",
+            "backend/**/serialization/**",
+            "backend/src/main/resources/db/**",
+            "api/openapi.yaml",
+            "backend/Dockerfile",
+            "backend/**/auth/**",
+            "frontend/src/**/auth/**"
+          ],
+          "human_approvals": 2,
+          "required_roles": [
+            "team-member (not the driver)"
+          ],
+          "ai": [
+            "lenses"
+          ],
+          "evidence": [
+            "terraform plan output for infra/",
+            "oasdiff breaking-change report for api/openapi.yaml"
+          ],
+          "why": "merge to main deploys infra, CI, persisted events, journal schema, public contract and auth",
+          "extra_lenses": [
+            "security",
+            "sre",
+            "data-integrity",
+            "backward-compat"
+          ]
+        },
+        {
           "id": "standard",
           "default": true,
           "human_approvals": 1,
           "required_roles": [
-            "code-owner"
+            "team-member (not the driver)"
           ],
           "ai": [
             "lenses"
@@ -804,13 +840,19 @@
             "docs/**",
             "**/*.md"
           ],
+          "exclude": [
+            "docs/sdlc/**",
+            "AGENTS.md",
+            "**/AGENTS.md",
+            "CLAUDE.md"
+          ],
           "human_approvals": 1,
           "required_roles": [],
           "ai": [],
-          "why": "docs-only changes"
+          "why": "docs-only changes; harness docs stay standard"
         }
       ],
-      "source": "default",
+      "source": "user",
       "basis": "propose.py; setup-sdlc-review/references/venues.md#pr-tiers"
     },
     "evals": {
@@ -837,7 +879,7 @@
           "threshold": 1.0,
           "timeout_min": 20,
           "max_scenarios": 12,
-          "source": "default",
+          "source": "user",
           "basis": "propose.py; setup-sdlc-evals"
         }
       ],
@@ -846,7 +888,7 @@
       "max_cost_usd": 10,
       "on_fail": "major finding on the PR: fix and re-run, or a human accepts the regression with a reason",
       "rediscover": "check-loop.sh runs detect-evals.sh and fails when a suite in the repo isn't listed here",
-      "source": "default",
+      "source": "user",
       "basis": "propose.py; setup-sdlc-evals"
     },
     "noise_controls": {
@@ -858,11 +900,16 @@
         "lockfiles"
       ],
       "comment_labels": "conventional-comments",
-      "max_review_rounds": 3
+      "max_review_rounds": 3,
+      "diff_warn": {
+        "lines": 400,
+        "files": 30
+      },
+      "registry_check": true
     },
     "ai_comment_policy": "AI reviewers comment, never approve; findings carry severity and evidence; one summary comment updated in place",
     "new_reviewer_rollout": "shadow mode: post to a log or draft for two weeks, then promote",
-    "source": "default",
+    "source": "user",
     "basis": "propose.py; setup-sdlc-review/references/venues.md",
     "personas": {
       "points": {
@@ -878,12 +925,30 @@
         ],
         "design:solution": [
           "skeptical-architect",
-          "design-critic",
-          "security"
+          "security",
+          "design-critic"
+        ],
+        "design:api": [
+          "api-consumer",
+          "backward-compat"
+        ],
+        "design:data": [
+          "data-integrity",
+          "migration-compat"
+        ],
+        "design:infra": [
+          "sre",
+          "security",
+          "finops"
+        ],
+        "design:ux": [
+          "target-user",
+          "accessibility"
         ],
         "design:docs": [
           "new-user",
-          "structure-style"
+          "structure-style",
+          "domain-expert"
         ],
         "review": [
           "correctness",
@@ -895,15 +960,21 @@
       "max_rounds_doc": 2,
       "surface": {
         "intent": "silent",
-        "design": "auto",
-        "review": "auto"
+        "design": "ticket",
+        "review": "pr"
       },
       "discovered": [],
       "context": "context-less: fresh subagent per lens, only the review point's inputs + the lens file, no CLAUDE.md, never the conversation",
       "dedupe": "scripts/sdlc/dedupe-findings.py with a per-work-item ledger",
-      "source": "default",
+      "source": "user",
       "basis": "https://github.com/google/elephant-goldfish-model; docs/research/05-persona-review.md"
-    }
+    },
+    "bitten_by": [
+      "tests weakened or skipped",
+      "premature done",
+      "scope creep / huge diffs",
+      "nit floods from AI review"
+    ]
   },
   "skills": {
     "family": "mattpocock",

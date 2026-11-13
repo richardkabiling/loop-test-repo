@@ -33,24 +33,29 @@
       "at": 1794537868
     },
     "quality.strictness": {
-      "value": "standard: diff size warns at 400 lines / 30 files, max_nits 5, up to 5 lenses per point, max_review_rounds 3",
-      "source": "preset"
+      "value": "standard: diff size warns at 400 lines / 30 files, max_nits 5, up to 5 lenses per point, max_review_rounds 3, registry check on",
+      "source": "user",
+      "at": 1794538559
     },
     "quality.pr": {
-      "value": "filed at the start of review; tiers critical (migrations, IaC, auth, payments, public contracts: 2 approvals incl. the owning team, extra security/data lenses), standard (default: 1 code owner, lenses), low (docs-only: 1 approval, no AI)",
-      "source": "preset"
+      "value": "filed at start of review; tiers: critical (infra/**, .github/workflows/**, backend/**/serialization/**, backend/src/main/resources/db/**, api/openapi.yaml, backend/Dockerfile, auth) 2 approvals not the driver + security/sre/data-integrity/backward-compat lenses + terraform plan and oasdiff evidence; standard (default) 1 approval + review lenses; low (docs/**, *.md except docs/sdlc/** and AGENTS.md) 1 approval, no AI. PR approval is the deploy gate.",
+      "source": "user",
+      "at": 1794538559
     },
     "quality.venues": {
-      "value": "pr for code; an existing bot only if the repo has one",
-      "source": "preset"
+      "value": "intent and design on the GitHub epic + committed files; plan and validate local; code and improve on the PR; no PR bot",
+      "source": "user",
+      "at": 1794538559
     },
     "quality.surface": {
-      "value": "intent silent, design auto, review auto",
-      "source": "preset"
+      "value": "intent silent; design on the epic; review on the PR",
+      "source": "user",
+      "at": 1794538559
     },
     "quality.evals": {
-      "value": "harness suite local, threshold 1.0, max_scenarios 12; product suites where found (existing CI or hosted tool kept, else local)",
-      "source": "preset"
+      "value": "harness suite local, threshold 1.0, max cost $10; no product suites (no AI features)",
+      "source": "user",
+      "at": 1794538559
     },
     "wiring.ci": {
       "value": "none",
@@ -123,10 +128,22 @@
       "value": "requirements always; solution, api, data, infra, ux, docs per deliverable; plus STRIDE threat model in solution/infra when a change crosses a trust boundary",
       "source": "user",
       "at": 1794537402
+    },
+    "quality.lenses": {
+      "value": "as shown: intent naive-reader/end-user/pre-mortem; requirements qa-test-designer/naive-reader/intent-conformance; solution skeptical-architect/security/design-critic; api api-consumer/backward-compat; data data-integrity/migration-compat; infra sre/security/finops; ux target-user/accessibility; docs new-user/structure-style/domain-expert; review correctness/spec-conformance/test-quality/silent-failure + critical extras",
+      "source": "user",
+      "at": 1794538559
+    },
+    "quality.bitten": {
+      "value": "tests weakened or skipped; premature done; scope creep / huge diffs; nit floods from AI review",
+      "source": "user",
+      "at": 1794538559
     }
   },
   "screens_done": [
     "repo",
-    "team"
+    "team",
+    "loop",
+    "quality"
   ]
 }
