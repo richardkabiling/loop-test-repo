@@ -450,14 +450,14 @@
       "depends_on": [],
       "design": {
         "subphase": "solution",
-        "method": "solution design per the solution subphase"
+        "method": "decisions surface during solution design; MADR"
       },
-      "build": "MADR minimal template",
-      "test": "markdown lint + link check",
-      "review": "tech lead / architect",
+      "build": "MADR 4.0 in docs/decisions/NNNN-title.md",
+      "test": "markdownlint + link check",
+      "review": "1 approval (team member, not the driver)",
       "ship": "merge = accepted; supersede, never edit",
       "source": "user",
-      "basis": "propose.py; setup-sdlc-deliverables/references/deliverables.md"
+      "basis": "setup-sdlc-deliverables/references/deliverables.md"
     },
     {
       "id": "infra",
@@ -468,12 +468,12 @@
       ],
       "design": {
         "subphase": "infra",
-        "method": ""
+        "method": "infra subphase: AWS Well-Architected checklist, SLOs, least-privilege IAM, cost, STRIDE threat model for IAM/network"
       },
-      "build": "",
-      "test": "",
-      "review": "",
-      "ship": "",
+      "build": "terraform plan -out (AWS provider, S3 remote state)",
+      "test": "terraform fmt -check, validate, tflint, checkov, terraform test",
+      "review": "critical tier; plan output attached to the PR",
+      "ship": "terraform apply from GitHub Actions on merge to main via AWS OIDC role; the agent never applies",
       "source": "user",
       "basis": "setup-sdlc-deliverables/references/deliverables.md"
     },
@@ -486,12 +486,12 @@
       ],
       "design": {
         "subphase": "",
-        "method": ""
+        "method": "pipeline changes designed in solution when needed"
       },
-      "build": "",
-      "test": "",
-      "review": "",
-      "ship": "",
+      "build": "GitHub Actions; actions pinned by SHA; minimal permissions",
+      "test": "actionlint + zizmor",
+      "review": "critical tier",
+      "ship": "merge to main",
       "source": "user",
       "basis": "setup-sdlc-deliverables/references/deliverables.md"
     },
@@ -504,12 +504,12 @@
       ],
       "design": {
         "subphase": "data",
-        "method": ""
+        "method": "data subphase: event versioning, event adapters, invariants, expand-contract"
       },
-      "build": "",
-      "test": "",
-      "review": "",
-      "ship": "",
+      "build": "Pekko Persistence versioned events + event adapters; journal DDL scripts in backend/src/main/resources/db/",
+      "test": "golden fixtures of every past event version must deserialize; journal replay against Testcontainers Postgres",
+      "review": "critical tier + data-integrity and migration-compat lenses",
+      "ship": "expand -> migrate -> contract; never drop or change a persisted field",
       "source": "user",
       "basis": "setup-sdlc-deliverables/references/deliverables.md"
     },
@@ -522,12 +522,12 @@
       ],
       "design": {
         "subphase": "api",
-        "method": ""
+        "method": "api subphase: contract-first, error model, compatibility classification, examples -> contract tests"
       },
-      "build": "",
-      "test": "",
-      "review": "",
-      "ship": "",
+      "build": "OpenAPI 3.1 in api/openapi.yaml",
+      "test": "Redocly lint + oasdiff breaking-change check",
+      "review": "critical tier; breaking change needs an ADR and a version bump",
+      "ship": "merge = published; frontend client regenerated (just gen-client)",
       "source": "user",
       "basis": "setup-sdlc-deliverables/references/deliverables.md"
     },
@@ -543,12 +543,12 @@
       ],
       "design": {
         "subphase": "api",
-        "method": ""
+        "method": "api + solution subphases"
       },
-      "build": "",
-      "test": "",
-      "review": "",
-      "ship": "",
+      "build": "sbt, Pekko HTTP, typed actors",
+      "test": "ScalaTest table-driven tests (required in backend/core/), ScalaCheck properties, ActorTestKit, Testcontainers Postgres integration, contract test against api/openapi.yaml",
+      "review": "persona lenses + 1 approval",
+      "ship": "CD on merge to main, behind feature flags; rehearsed rollback",
       "source": "user",
       "basis": "setup-sdlc-deliverables/references/deliverables.md"
     },
@@ -562,12 +562,12 @@
       ],
       "design": {
         "subphase": "infra",
-        "method": ""
+        "method": "infra subphase"
       },
-      "build": "",
-      "test": "",
-      "review": "",
-      "ship": "",
+      "build": "multi-stage Dockerfile, Temurin JRE base pinned by digest, non-root",
+      "test": "hadolint, Trivy, container smoke test",
+      "review": "critical tier",
+      "ship": "pushed to ECR and deployed by CD on merge to main",
       "source": "user",
       "basis": "setup-sdlc-deliverables/references/deliverables.md"
     },
@@ -581,12 +581,12 @@
       ],
       "design": {
         "subphase": "ux",
-        "method": ""
+        "method": "ux subphase: every screen state, WCAG 2.2 AA"
       },
-      "build": "",
-      "test": "",
-      "review": "",
-      "ship": "",
+      "build": "Vite + React; typed client generated from OpenAPI (openapi-typescript)",
+      "test": "testing trophy: Vitest + Testing Library, Playwright E2E with toHaveScreenshot, axe (WCAG 2.2 AA)",
+      "review": "screenshots in the PR + persona lenses + 1 approval",
+      "ship": "CD on merge to main (S3 + CloudFront), behind feature flags",
       "source": "user",
       "basis": "setup-sdlc-deliverables/references/deliverables.md"
     },
@@ -599,14 +599,14 @@
       ],
       "design": {
         "subphase": "docs",
-        "method": "docs design per the docs subphase"
+        "method": "docs subphase"
       },
-      "build": "Di\u00e1taxis",
-      "test": "link check + examples run as tests where possible",
-      "review": "docs owner",
+      "build": "Diataxis Markdown",
+      "test": "markdownlint, link check, Vale",
+      "review": "low tier",
       "ship": "published with the release",
       "source": "user",
-      "basis": "propose.py; setup-sdlc-deliverables/references/deliverables.md"
+      "basis": "setup-sdlc-deliverables/references/deliverables.md"
     },
     {
       "id": "tech-ops-manual",
@@ -620,12 +620,12 @@
       ],
       "design": {
         "subphase": "docs",
-        "method": ""
+        "method": "docs subphase"
       },
-      "build": "",
-      "test": "",
-      "review": "",
-      "ship": "",
+      "build": "Diataxis runbooks: deploy, rollback, one per alert, incident, on-call",
+      "test": "link check; runbook commands dry-run where possible",
+      "review": "domain-expert lens + 1 approval",
+      "ship": "updated in the same PR as the infra/API change (doc-code drift check)",
       "source": "user",
       "basis": "setup-sdlc-deliverables/references/deliverables.md"
     },
@@ -639,12 +639,12 @@
       ],
       "design": {
         "subphase": "docs",
-        "method": ""
+        "method": "docs subphase"
       },
-      "build": "",
-      "test": "",
-      "review": "",
-      "ship": "",
+      "build": "Diataxis: business processes, support playbooks, admin procedures",
+      "test": "markdownlint, Vale (plain language)",
+      "review": "domain-expert + new-user lenses + 1 approval",
+      "ship": "published with the release",
       "source": "user",
       "basis": "setup-sdlc-deliverables/references/deliverables.md"
     },
@@ -659,12 +659,12 @@
       ],
       "design": {
         "subphase": "",
-        "method": ""
+        "method": "none"
       },
-      "build": "",
-      "test": "",
-      "review": "",
-      "ship": "",
+      "build": "intent, spec, status; release notes from Conventional Commits",
+      "test": "link check",
+      "review": "part of the gates they record",
+      "ship": "release notes on deploy",
       "source": "user",
       "basis": "setup-sdlc-deliverables/references/deliverables.md"
     }
@@ -991,20 +991,30 @@
       ],
       "build": [
         "tdd",
-        "diagnosing-bugs"
+        "diagnosing-bugs",
+        "codebase-design"
       ],
       "review": [
         "code-review",
         "pr"
       ],
-      "ship": [],
+      "ship": [
+        "wizard"
+      ],
       "improve": [
-        "retro"
+        "retro",
+        "handoff",
+        "improve-codebase-architecture"
       ]
     },
     "cross_cutting": [
+      "typescript-lsp",
+      "metals-mcp",
       "context7",
-      "playwright"
+      "playwright",
+      "github",
+      "terraform",
+      "security-guidance"
     ],
     "install": [
       {
@@ -1013,23 +1023,225 @@
         "tools": [
           "claude-code"
         ]
+      },
+      {
+        "name": "mattpocock-skills",
+        "how": "npx skills@latest add mattpocock/skills -a cursor -a codex",
+        "tools": [
+          "cursor",
+          "codex"
+        ]
+      },
+      {
+        "name": "typescript-lsp, context7, playwright, github, terraform, security-guidance",
+        "how": "claude plugin install <name>@claude-plugins-official",
+        "tools": [
+          "claude-code"
+        ]
+      },
+      {
+        "name": "metals-mcp",
+        "how": "Metals MCP server (metals >= 1.5) registered in .mcp.json",
+        "tools": [
+          "claude-code",
+          "cursor",
+          "codex"
+        ]
       }
     ],
-    "source": "default",
-    "basis": "propose.py; setup-sdlc-skills/references/catalog.md"
+    "source": "user",
+    "basis": "setup-sdlc-skills/references/catalog.md"
   },
   "rules": {
     "global": [
       {
         "topic": "commits",
         "standard": "Conventional Commits 1.0.0",
-        "enforced_by": "commit-msg hook (pre-commit)"
+        "enforced_by": "commit-msg hook"
+      },
+      {
+        "topic": "commands",
+        "standard": "run everything through the root justfile (just test, just test-single, just lint, ...)",
+        "enforced_by": "AGENTS.md"
+      },
+      {
+        "topic": "scala",
+        "standard": "Scala 3 LTS; scalafmt + scalafix; -Werror; no null/var/return; never block inside actors or streams",
+        "enforced_by": "pre-commit + Stop check (just lint, just typecheck); scoped rule"
+      },
+      {
+        "topic": "typescript",
+        "standard": "strict tsconfig, no any; ESLint flat config + Prettier; tsc --noEmit",
+        "enforced_by": "lint-staged + Stop check typecheck"
       }
     ],
-    "per_deliverable": {},
-    "scoped": [],
-    "source": "default",
-    "basis": "propose.py; setup-sdlc-rules/references/standards.md"
+    "per_deliverable": {
+      "infra": [
+        {
+          "topic": "terraform-style",
+          "standard": "HashiCorp style; snake_case; main/variables/outputs/versions.tf",
+          "enforced_by": "terraform fmt, tflint, checkov"
+        }
+      ],
+      "ci-cd": [
+        {
+          "topic": "actions-security",
+          "standard": "pin actions by SHA; minimal permissions; no pull_request_target with PR checkout",
+          "enforced_by": "actionlint + zizmor"
+        }
+      ],
+      "api-contract": [
+        {
+          "topic": "openapi",
+          "standard": "OpenAPI 3.1; breaking change needs ADR + version",
+          "enforced_by": "Redocly lint + oasdiff in pr-checks.sh"
+        }
+      ],
+      "api-image": [
+        {
+          "topic": "containers",
+          "standard": "multi-stage, base pinned by digest, non-root",
+          "enforced_by": "hadolint + Trivy"
+        }
+      ],
+      "web": [
+        {
+          "topic": "accessibility",
+          "standard": "WCAG 2.2 AA; axe in E2E",
+          "enforced_by": "playwright + @axe-core"
+        }
+      ],
+      "adr": [
+        {
+          "topic": "decisions",
+          "standard": "MADR 4.0",
+          "enforced_by": "markdownlint"
+        }
+      ],
+      "user-guide": [
+        {
+          "topic": "docs",
+          "standard": "Diataxis",
+          "enforced_by": "markdownlint + Vale"
+        }
+      ],
+      "tech-ops-manual": [
+        {
+          "topic": "docs",
+          "standard": "Diataxis how-to runbooks",
+          "enforced_by": "markdownlint + doc-code drift check"
+        }
+      ],
+      "business-ops-manual": [
+        {
+          "topic": "docs",
+          "standard": "Diataxis; plain language",
+          "enforced_by": "markdownlint + Vale"
+        }
+      ]
+    },
+    "scoped": [
+      {
+        "name": "backend",
+        "paths": [
+          "backend/**"
+        ],
+        "rule": "Scala 3 + Pekko typed actors. Never block inside actors or streams. Run just test-single <spec> while iterating.",
+        "enforced_by": "nested AGENTS.md; scalafmt/scalafix"
+      },
+      {
+        "name": "core-data-driven-tests",
+        "paths": [
+          "backend/core/**"
+        ],
+        "rule": "Domain core. Every behaviour change ships a table-driven ScalaTest (TableDrivenPropertyChecks) covering the cases.",
+        "enforced_by": "pr-checks.sh fails when backend/core/src/main changes without backend/core/src/test; test-quality lens"
+      },
+      {
+        "name": "persisted-events",
+        "paths": [
+          "backend/**/serialization/**"
+        ],
+        "rule": "Persisted events are forever: add a new event version and an event adapter; never change or remove a persisted field; never edit existing golden fixtures.",
+        "enforced_by": "protect-paths hook on existing fixtures; golden fixture test"
+      },
+      {
+        "name": "journal-migrations",
+        "paths": [
+          "backend/src/main/resources/db/**"
+        ],
+        "rule": "Append-only. Never edit an applied journal script; add a new one.",
+        "enforced_by": "protect-paths hook blocks edits to existing files"
+      },
+      {
+        "name": "api-contract",
+        "paths": [
+          "api/openapi.yaml"
+        ],
+        "rule": "Contract-first: change the contract before the code. Breaking changes need an ADR and a version bump.",
+        "enforced_by": "Redocly + oasdiff in pr-checks.sh"
+      },
+      {
+        "name": "frontend",
+        "paths": [
+          "frontend/**"
+        ],
+        "rule": "TypeScript strict, no any. Import the API only through the generated client.",
+        "enforced_by": "nested AGENTS.md; ESLint + tsc"
+      },
+      {
+        "name": "generated-client",
+        "paths": [
+          "frontend/src/api/gen/**"
+        ],
+        "rule": "Generated. Regenerate with just gen-client; never hand-edit.",
+        "enforced_by": "protect-paths hook; regenerate-and-diff check"
+      },
+      {
+        "name": "infra",
+        "paths": [
+          "infra/**"
+        ],
+        "rule": "Plan, never apply. Attach terraform plan output to the PR.",
+        "enforced_by": "permissions deny terraform apply; tflint + checkov"
+      },
+      {
+        "name": "workflows",
+        "paths": [
+          ".github/workflows/**"
+        ],
+        "rule": "Pin actions by SHA; least-privilege permissions.",
+        "enforced_by": "actionlint + zizmor"
+      },
+      {
+        "name": "secrets",
+        "paths": [
+          ".env*",
+          "**/*.pem",
+          "**/*.key"
+        ],
+        "rule": "Never read, print or commit (.env.example is fine).",
+        "enforced_by": "protect-paths hook"
+      },
+      {
+        "name": "lockfiles",
+        "paths": [
+          "pnpm-lock.yaml"
+        ],
+        "rule": "Change only through pnpm.",
+        "enforced_by": "protect-paths hook; diff-guard lockfile check"
+      },
+      {
+        "name": "decisions",
+        "paths": [
+          "docs/decisions/**"
+        ],
+        "rule": "ADRs are superseded, never rewritten.",
+        "enforced_by": "protect-paths hook on accepted ADRs; review"
+      }
+    ],
+    "source": "user",
+    "basis": "setup-sdlc-rules/references/standards.md; setup-sdlc-discover/references/notable-folders.md"
   },
   "context": {
     "strategies": [
@@ -1038,49 +1250,45 @@
       "front-loaded-lead-lines",
       "scripts-over-reasoning",
       "lean-root-instructions",
+      "nested-agents-md",
       "fresh-session-per-phase",
       "doc-graph",
       "repo-map",
       "lsp-code-intelligence",
       "read-deny-noise"
     ],
-    "code_graph": "typescript-lsp + docs/sdlc/REPO_MAP.md (repo-map.sh)",
+    "nested_instructions": [
+      "backend/AGENTS.md",
+      "frontend/AGENTS.md",
+      "infra/AGENTS.md"
+    ],
+    "code_graph": "typescript-lsp + Metals MCP + docs/sdlc/REPO_MAP.md (repo-map.sh); no semantic graph",
     "doc_graph": "docs/sdlc/MAP.md",
     "read_deny": [
-      "**/dist/**",
-      "src/gen/**"
+      "**/target/**",
+      "frontend/dist/**",
+      "**/node_modules/**",
+      "frontend/src/api/gen/**",
+      "infra/.terraform/**"
     ],
     "state_files": {
       "progress": "docs/work/<slug>/progress.md",
       "feature_list": "docs/work/<slug>/tickets.json"
     },
-    "source": "default",
-    "basis": "propose.py; setup-sdlc-context/references/strategies.md"
+    "source": "user",
+    "basis": "setup-sdlc-context/references/strategies.md"
   },
   "guardrails": [
-    {
-      "id": "nit-flood",
-      "failure_mode": "Reviewer floods the PR with nits; real issues get lost",
-      "phases": [
-        "design",
-        "review"
-      ],
-      "mitigation": "Cap nits at 5; review for correctness and spec gaps only; skip what linters enforce",
-      "enforced_by": "REVIEW.md + reviewer prompt",
-      "deterministic": false,
-      "source": "default",
-      "basis": "propose.py; https://claude.com/resources/articles/the-ai-native-sdlc-playbook"
-    },
     {
       "id": "test-tampering",
       "failure_mode": "Agent skips, deletes or weakens tests to go green",
       "phases": [
         "build"
       ],
-      "mitigation": "Block skipped/deleted tests and net assertion loss unless a human approves",
+      "mitigation": "Block skipped/deleted tests and net assertion loss unless a human approves (ScalaTest ignore/pending, Vitest .skip/.only)",
       "enforced_by": "diff-guard.sh in the Stop hook, the pre-commit hook and pr-checks.sh",
       "deterministic": true,
-      "source": "default",
+      "source": "user",
       "basis": "propose.py; https://claude.com/resources/articles/the-ai-native-sdlc-playbook"
     },
     {
@@ -1092,22 +1300,8 @@
       "mitigation": "Exit criteria per phase; Stop hook runs typecheck + tests; validation evidence required before the PR",
       "enforced_by": "stop-check.sh + PR template",
       "deterministic": true,
-      "source": "default",
+      "source": "user",
       "basis": "propose.py; https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents"
-    },
-    {
-      "id": "self-approval",
-      "failure_mode": "Authoring agent (or a lenient evaluator) approves its own work",
-      "phases": [
-        "design",
-        "review",
-        "ship"
-      ],
-      "mitigation": "Fresh-context reviewer; AI never approves; human code owner via branch protection + conversation resolution",
-      "enforced_by": "branch protection or rulesets; validator requires a human gate on the review phase and a human approval in every PR tier",
-      "deterministic": true,
-      "source": "default",
-      "basis": "propose.py; https://www.anthropic.com/engineering/harness-design-long-running-apps"
     },
     {
       "id": "scope-creep",
@@ -1119,8 +1313,35 @@
       "mitigation": "plan.md names files; one ticket per session; warn above 400 changed lines / 30 files",
       "enforced_by": "diff-guard.sh --max-lines 400 --max-files 30 --size warn",
       "deterministic": true,
-      "source": "default",
+      "source": "user",
       "basis": "propose.py; https://github.com/google/eng-practices/blob/master/review/developer/small-cls.md"
+    },
+    {
+      "id": "nit-flood",
+      "failure_mode": "Reviewer floods the PR with nits; real issues get lost",
+      "phases": [
+        "design",
+        "review"
+      ],
+      "mitigation": "Cap nits at 5; review for correctness and spec gaps only; skip what linters enforce",
+      "enforced_by": "REVIEW.md + reviewer prompt + dedupe-findings.py; one summary comment updated in place",
+      "deterministic": false,
+      "source": "user",
+      "basis": "propose.py; https://claude.com/resources/articles/the-ai-native-sdlc-playbook"
+    },
+    {
+      "id": "self-approval",
+      "failure_mode": "Authoring agent (or a lenient evaluator) approves its own work",
+      "phases": [
+        "design",
+        "review",
+        "ship"
+      ],
+      "mitigation": "Fresh-context reviewer; AI never approves; approver is a team member other than the driver, via branch protection/rulesets",
+      "enforced_by": "branch protection or rulesets; validator requires a human gate on the review phase and a human approval in every PR tier",
+      "deterministic": true,
+      "source": "user",
+      "basis": "propose.py; https://www.anthropic.com/engineering/harness-design-long-running-apps"
     },
     {
       "id": "hallucinated-deps",
@@ -1131,7 +1352,7 @@
       "mitigation": "New dependencies must exist in their registry; typecheck catches fake APIs",
       "enforced_by": "diff-guard.sh --check-registry in pr-checks.sh (review phase)",
       "deterministic": true,
-      "source": "default",
+      "source": "user",
       "basis": "propose.py; docs/research/04-review-interaction-and-failure-modes.md"
     },
     {
@@ -1140,10 +1361,10 @@
       "phases": [
         "build"
       ],
-      "mitigation": "max turns, budget and iterations; CI timeout + concurrency; Stop-hook block cap 3",
+      "mitigation": "120 turns, $25 budget, 3 failed validations; Stop-hook block cap 3",
       "enforced_by": "loops.autonomy.limits; stop-check.sh --max-blocks 3",
       "deterministic": true,
-      "source": "default",
+      "source": "user",
       "basis": "propose.py; https://code.claude.com/docs/en/best-practices"
     },
     {
@@ -1155,8 +1376,84 @@
       "mitigation": "Block reads of .env (not .env.example); secret scanning (forge setting or the existing CI)",
       "enforced_by": "protect-paths.sh (protect: read); permissions.deny",
       "deterministic": true,
-      "source": "default",
+      "source": "user",
       "basis": "propose.py; https://code.claude.com/docs/en/best-practices"
+    },
+    {
+      "id": "event-schema-break",
+      "failure_mode": "A persisted Pekko event changes shape and old journals no longer replay",
+      "phases": [
+        "design",
+        "build",
+        "review"
+      ],
+      "mitigation": "Golden fixtures for every past event version; append-only serialization folder",
+      "enforced_by": "golden fixture test in just test; protect-paths hook",
+      "deterministic": true,
+      "source": "user",
+      "basis": "setup-sdlc-guardrails/references/failure-modes.md"
+    },
+    {
+      "id": "silent-errors",
+      "failure_mode": "Swallowed Future failures, empty catches, missing actor supervision hide failures",
+      "phases": [
+        "build",
+        "review"
+      ],
+      "mitigation": "No swallowed failures; explicit supervision; validate only at boundaries",
+      "enforced_by": "silent-failure lens + scalafix rules",
+      "deterministic": false,
+      "source": "user",
+      "basis": "setup-sdlc-guardrails/references/failure-modes.md"
+    },
+    {
+      "id": "doc-drift",
+      "failure_mode": "Ops manuals go stale when infra or API changes",
+      "phases": [
+        "build",
+        "review"
+      ],
+      "mitigation": "Infra/API change must touch docs/ops/tech/ in the same PR",
+      "enforced_by": "doc-code drift check in pr-checks.sh",
+      "deterministic": true,
+      "source": "user",
+      "basis": "setup-sdlc-guardrails/references/failure-modes.md"
+    },
+    {
+      "id": "unreviewed-dep-bump",
+      "failure_mode": "Lockfile changes without a manifest change",
+      "phases": [
+        "build"
+      ],
+      "mitigation": "Flag lockfile-only diffs",
+      "enforced_by": "diff-guard.sh lockfile check",
+      "deterministic": true,
+      "source": "user",
+      "basis": "setup-sdlc-guardrails/references/failure-modes.md"
+    },
+    {
+      "id": "review-loop",
+      "failure_mode": "Agent and reviewer ping-pong forever",
+      "phases": [
+        "review"
+      ],
+      "mitigation": "Max 3 review rounds, then escalate to a human",
+      "enforced_by": "REVIEW.md + loops.autonomy",
+      "deterministic": false,
+      "source": "user",
+      "basis": "setup-sdlc-guardrails/references/failure-modes.md"
+    },
+    {
+      "id": "instruction-bloat",
+      "failure_mode": "Long instructions get ignored",
+      "phases": [
+        "improve"
+      ],
+      "mitigation": "Root AGENTS.md <= 200 lines; scoped rules and nested AGENTS.md",
+      "enforced_by": "check-loop.sh",
+      "deterministic": true,
+      "source": "user",
+      "basis": "setup-sdlc-guardrails/references/failure-modes.md"
     }
   ],
   "setup": {

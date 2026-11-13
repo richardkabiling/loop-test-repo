@@ -138,12 +138,38 @@
       "value": "tests weakened or skipped; premature done; scope creep / huge diffs; nit floods from AI review",
       "source": "user",
       "at": 1794538559
+    },
+    "conv.methods": {
+      "value": "as shown (tables A-E of screen 5)",
+      "source": "user",
+      "at": 1794538806
+    },
+    "conv.rules": {
+      "value": "as shown (tables A-E of screen 5)",
+      "source": "user",
+      "at": 1794538806
+    },
+    "conv.context": {
+      "value": "as shown (tables A-E of screen 5)",
+      "source": "user",
+      "at": 1794538806
+    },
+    "conv.guardrails": {
+      "value": "as shown (tables A-E of screen 5)",
+      "source": "user",
+      "at": 1794538806
+    },
+    "conv.skills": {
+      "value": "mattpocock family as shown; cross-cutting typescript-lsp, Metals MCP, context7, playwright, GitHub MCP, HashiCorp Terraform MCP, security-guidance",
+      "source": "user",
+      "at": 1794538806
     }
   },
   "screens_done": [
     "repo",
     "team",
     "loop",
-    "quality"
+    "quality",
+    "conventions"
   ]
 }
