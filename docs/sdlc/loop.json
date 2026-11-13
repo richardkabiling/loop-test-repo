@@ -1,0 +1,551 @@
+{
+  "version": 1,
+  "tools": [
+    "claude-code"
+  ],
+  "harness": {
+    "name": "loop-test-repo loop",
+    "prefix": "sdlc",
+    "source": "default",
+    "basis": "propose.py"
+  },
+  "discovery": {
+    "mode": "greenfield",
+    "summary": "Greenfield monorepo: Scala + Apache Pekko API (sbt, Pekko Persistence on Postgres) in backend/, TypeScript + React + Vite web app (pnpm) in frontend/, OpenAPI contract between them, GitHub PRs + GitHub Actions, root justfile",
+    "stack": [
+      {
+        "category": "lang",
+        "tech": "scala",
+        "path": "backend/"
+      },
+      {
+        "category": "build",
+        "tech": "sbt",
+        "path": "backend/"
+      },
+      {
+        "category": "framework",
+        "tech": "apache-pekko",
+        "path": "backend/"
+      },
+      {
+        "category": "persistence",
+        "tech": "pekko-persistence-jdbc (postgres)",
+        "path": "backend/"
+      },
+      {
+        "category": "lang",
+        "tech": "typescript",
+        "path": "frontend/"
+      },
+      {
+        "category": "framework",
+        "tech": "react + vite",
+        "path": "frontend/"
+      },
+      {
+        "category": "package-manager",
+        "tech": "pnpm",
+        "path": "frontend/"
+      },
+      {
+        "category": "test",
+        "tech": "scalatest (table-driven) + testcontainers",
+        "path": "backend/"
+      },
+      {
+        "category": "test",
+        "tech": "vitest + playwright",
+        "path": "frontend/"
+      },
+      {
+        "category": "api",
+        "tech": "openapi",
+        "path": "api/openapi.yaml"
+      },
+      {
+        "category": "monorepo",
+        "tech": "justfile (root task runner)"
+      },
+      {
+        "category": "ci",
+        "tech": "github-actions"
+      }
+    ],
+    "commands": {
+      "install": "just install  # sbt update + pnpm install",
+      "build": "just build  # sbt compile + pnpm build",
+      "test": "just test  # sbt test + pnpm test",
+      "test_single": "just test-single <path>  # backend: sbt \"testOnly *FooSpec\"; frontend: pnpm vitest run <file>",
+      "lint": "just lint  # sbt scalafmtCheckAll \"scalafixAll --check\" + pnpm lint",
+      "typecheck": "just typecheck  # sbt compile + pnpm typecheck (tsc --noEmit)",
+      "dev": "just dev  # sbt ~reStart + pnpm dev"
+    },
+    "notable_folders": [
+      {
+        "path": "backend/",
+        "kind": "packages",
+        "confirmed": true
+      },
+      {
+        "path": "frontend/",
+        "kind": "packages",
+        "confirmed": true
+      },
+      {
+        "path": "backend/core/",
+        "kind": "regulated",
+        "confirmed": true,
+        "note": "domain core module: every behaviour change needs data-driven (table-driven) tests"
+      },
+      {
+        "path": "backend/src/main/resources/db/",
+        "kind": "migrations",
+        "confirmed": true
+      },
+      {
+        "path": "backend/**/serialization/",
+        "kind": "migrations",
+        "confirmed": true,
+        "note": "persisted Pekko events: evolve with new versions and event adapters, never change or drop a persisted field"
+      },
+      {
+        "path": "api/openapi.yaml",
+        "kind": "api",
+        "confirmed": true
+      },
+      {
+        "path": "frontend/src/api/gen/",
+        "kind": "generated",
+        "confirmed": true,
+        "regenerate": "just gen-client"
+      },
+      {
+        "path": ".github/workflows/",
+        "kind": "ci",
+        "confirmed": true
+      },
+      {
+        "path": ".env*",
+        "kind": "secrets",
+        "confirmed": true
+      },
+      {
+        "path": "pnpm-lock.yaml",
+        "kind": "lockfile",
+        "confirmed": true
+      },
+      {
+        "path": "docs/decisions/",
+        "kind": "docs",
+        "confirmed": true
+      }
+    ],
+    "existing_agent_config": [
+      ".claude/settings.json (sdlc-loop plugin enabled, project scope)"
+    ],
+    "source": "user",
+    "existing_gates": {
+      "codeowners": "none",
+      "branch_protection": "none (no default branch yet; main intended)",
+      "ci_manual_gates": [],
+      "doc_mentions": [],
+      "outside_repo": [
+        "security sign-off",
+        "design / architecture review",
+        "demo before release",
+        "change advisory board (CAB)"
+      ],
+      "source": "detect-gates.sh --remote; user (out-of-repo approvals)"
+    },
+    "pr": {
+      "host": "github",
+      "where": "GitHub pull requests on origin; base branch main",
+      "templates": [],
+      "standards": [],
+      "tier_signals": [],
+      "source": "detect-pr.sh --remote; user"
+    },
+    "evals": {
+      "harness_suites": [],
+      "product_suites": [],
+      "ai_features": [],
+      "source": "detect-evals.sh; user: no outside evals"
+    }
+  },
+  "loops": {
+    "upstream": {
+      "store": "",
+      "where": "",
+      "grilling": "",
+      "team_protocol": "",
+      "tickets": "",
+      "source": "",
+      "basis": ""
+    },
+    "phases": [],
+    "autonomy": {
+      "default_mode": "",
+      "afk_allowed_for": [],
+      "limits": {
+        "max_turns": 0
+      }
+    },
+    "source": "",
+    "human_gates": []
+  },
+  "deliverables": [
+    {
+      "id": "adr",
+      "kind": "adr",
+      "path": "docs/decisions/",
+      "depends_on": [],
+      "design": {
+        "subphase": "solution",
+        "method": "solution design per the solution subphase"
+      },
+      "build": "MADR minimal template",
+      "test": "markdown lint + link check",
+      "review": "tech lead / architect",
+      "ship": "merge = accepted; supersede, never edit",
+      "source": "user",
+      "basis": "propose.py; setup-sdlc-deliverables/references/deliverables.md"
+    },
+    {
+      "id": "db-schema",
+      "kind": "db-schema",
+      "path": "backend/src/main/resources/db/; backend/**/serialization/",
+      "depends_on": [
+        "adr"
+      ],
+      "design": {
+        "subphase": "data",
+        "method": ""
+      },
+      "build": "",
+      "test": "",
+      "review": "",
+      "ship": "",
+      "source": "user",
+      "basis": "setup-sdlc-deliverables/references/deliverables.md"
+    },
+    {
+      "id": "api",
+      "kind": "http-api",
+      "path": "backend/; api/openapi.yaml",
+      "depends_on": [
+        "adr",
+        "db-schema"
+      ],
+      "design": {
+        "subphase": "api",
+        "method": ""
+      },
+      "build": "",
+      "test": "",
+      "review": "",
+      "ship": "",
+      "source": "user",
+      "basis": "setup-sdlc-deliverables/references/deliverables.md"
+    },
+    {
+      "id": "web",
+      "kind": "web-app",
+      "path": "frontend/",
+      "depends_on": [
+        "api"
+      ],
+      "design": {
+        "subphase": "ux",
+        "method": ""
+      },
+      "build": "",
+      "test": "",
+      "review": "",
+      "ship": "",
+      "source": "user",
+      "basis": "setup-sdlc-deliverables/references/deliverables.md"
+    },
+    {
+      "id": "ci-cd",
+      "kind": "ci-cd",
+      "path": ".github/workflows/",
+      "depends_on": [],
+      "design": {
+        "subphase": "",
+        "method": ""
+      },
+      "build": "",
+      "test": "",
+      "review": "",
+      "ship": "",
+      "source": "user",
+      "basis": "setup-sdlc-deliverables/references/deliverables.md"
+    },
+    {
+      "id": "user-guide",
+      "kind": "user-guide",
+      "path": "README.md",
+      "depends_on": [],
+      "design": {
+        "subphase": "docs",
+        "method": "docs design per the docs subphase"
+      },
+      "build": "Di\u00e1taxis",
+      "test": "link check + examples run as tests where possible",
+      "review": "docs owner",
+      "ship": "published with the release",
+      "source": "user",
+      "basis": "propose.py; setup-sdlc-deliverables/references/deliverables.md"
+    },
+    {
+      "id": "stakeholder-docs",
+      "kind": "stakeholder-docs",
+      "path": "docs/work/",
+      "depends_on": [],
+      "design": {
+        "subphase": "",
+        "method": ""
+      },
+      "build": "",
+      "test": "",
+      "review": "",
+      "ship": "",
+      "source": "user",
+      "basis": "setup-sdlc-deliverables/references/deliverables.md"
+    }
+  ],
+  "review": {
+    "default_venue": "",
+    "artifacts": [],
+    "pr": {
+      "host": "",
+      "filed": "",
+      "draft": false,
+      "title": "",
+      "body": "",
+      "tiering": "",
+      "tiers": [],
+      "source": "",
+      "basis": ""
+    },
+    "evals": {
+      "run_in": "",
+      "suites": [],
+      "agent_cmd": "",
+      "grader_cmd": "",
+      "max_cost_usd": 0,
+      "on_fail": "",
+      "rediscover": "",
+      "source": "",
+      "basis": ""
+    },
+    "noise_controls": {
+      "max_nits": 0,
+      "report": "",
+      "verify_before_report": false,
+      "skip_paths": [],
+      "comment_labels": "",
+      "max_review_rounds": 0
+    },
+    "ai_comment_policy": "",
+    "new_reviewer_rollout": "",
+    "source": "",
+    "basis": "",
+    "personas": {
+      "points": {
+        "intent": [],
+        "design:requirements": [],
+        "design:solution": [],
+        "design:ux": [],
+        "design:api": [],
+        "design:data": [],
+        "design:infra": [],
+        "review": []
+      },
+      "max_rounds_doc": 0,
+      "surface": {
+        "intent": "",
+        "design": "",
+        "review": "",
+        "note": ""
+      },
+      "discovered": [],
+      "context": "",
+      "dedupe": "",
+      "source": "",
+      "basis": ""
+    }
+  },
+  "skills": {
+    "family": "",
+    "per_phase": {
+      "intent": [],
+      "design": [],
+      "plan": [],
+      "build": [],
+      "review": [],
+      "ship": [],
+      "improve": []
+    },
+    "cross_cutting": [],
+    "install": [],
+    "source": ""
+  },
+  "rules": {
+    "global": [],
+    "per_deliverable": {
+      "web": [],
+      "infra": []
+    },
+    "scoped": [],
+    "source": "",
+    "researched": ""
+  },
+  "context": {
+    "strategies": [],
+    "code_graph": "",
+    "doc_graph": "",
+    "read_deny": [],
+    "state_files": {
+      "progress": "",
+      "feature_list": ""
+    },
+    "source": ""
+  },
+  "guardrails": [
+    {
+      "id": "nit-flood",
+      "failure_mode": "Reviewer floods the PR with nits; real issues get lost",
+      "phases": [
+        "design",
+        "review"
+      ],
+      "mitigation": "Cap nits at 5; review for correctness and spec gaps only; skip what linters enforce",
+      "enforced_by": "REVIEW.md + reviewer prompt",
+      "deterministic": false,
+      "source": "default",
+      "basis": "propose.py; https://claude.com/resources/articles/the-ai-native-sdlc-playbook"
+    },
+    {
+      "id": "test-tampering",
+      "failure_mode": "Agent skips, deletes or weakens tests to go green",
+      "phases": [
+        "build"
+      ],
+      "mitigation": "Block skipped/deleted tests and net assertion loss unless a human approves",
+      "enforced_by": "diff-guard.sh in the Stop hook, the pre-commit hook and pr-checks.sh",
+      "deterministic": true,
+      "source": "default",
+      "basis": "propose.py; https://claude.com/resources/articles/the-ai-native-sdlc-playbook"
+    },
+    {
+      "id": "premature-completion",
+      "failure_mode": "Agent declares done without verifying",
+      "phases": [
+        "build"
+      ],
+      "mitigation": "Exit criteria per phase; Stop hook runs typecheck + tests; validation evidence required before the PR",
+      "enforced_by": "stop-check.sh + PR template",
+      "deterministic": true,
+      "source": "default",
+      "basis": "propose.py; https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents"
+    },
+    {
+      "id": "self-approval",
+      "failure_mode": "Authoring agent (or a lenient evaluator) approves its own work",
+      "phases": [
+        "design",
+        "review",
+        "ship"
+      ],
+      "mitigation": "Fresh-context reviewer; AI never approves; human code owner via branch protection + conversation resolution",
+      "enforced_by": "branch protection or rulesets; validator requires a human gate on the review phase and a human approval in every PR tier",
+      "deterministic": true,
+      "source": "default",
+      "basis": "propose.py; https://www.anthropic.com/engineering/harness-design-long-running-apps"
+    },
+    {
+      "id": "scope-creep",
+      "failure_mode": "Unrequested changes and giant diffs",
+      "phases": [
+        "plan",
+        "build"
+      ],
+      "mitigation": "plan.md names files; one ticket per session; warn above 400 changed lines / 30 files",
+      "enforced_by": "diff-guard.sh --max-lines 400 --max-files 30 --size warn",
+      "deterministic": true,
+      "source": "default",
+      "basis": "propose.py; https://github.com/google/eng-practices/blob/master/review/developer/small-cls.md"
+    },
+    {
+      "id": "hallucinated-deps",
+      "failure_mode": "Invented packages or APIs (slopsquatting)",
+      "phases": [
+        "build"
+      ],
+      "mitigation": "New dependencies must exist in their registry; typecheck catches fake APIs",
+      "enforced_by": "diff-guard.sh --check-registry in pr-checks.sh (review phase)",
+      "deterministic": true,
+      "source": "default",
+      "basis": "propose.py; docs/research/04-review-interaction-and-failure-modes.md"
+    },
+    {
+      "id": "runaway",
+      "failure_mode": "Unbounded loops and cost in unattended runs",
+      "phases": [
+        "build"
+      ],
+      "mitigation": "max turns, budget and iterations; CI timeout + concurrency; Stop-hook block cap 3",
+      "enforced_by": "loops.autonomy.limits; stop-check.sh --max-blocks 3",
+      "deterministic": true,
+      "source": "default",
+      "basis": "propose.py; https://code.claude.com/docs/en/best-practices"
+    },
+    {
+      "id": "secret-leak",
+      "failure_mode": "Secrets read, printed or committed",
+      "phases": [
+        "build"
+      ],
+      "mitigation": "Block reads of .env (not .env.example); secret scanning (forge setting or the existing CI)",
+      "enforced_by": "protect-paths.sh (protect: read); permissions.deny",
+      "deterministic": true,
+      "source": "default",
+      "basis": "propose.py; https://code.claude.com/docs/en/best-practices"
+    }
+  ],
+  "setup": {
+    "tracker": {
+      "kind": "",
+      "details": ""
+    },
+    "labels": {
+      "needs-triage": "",
+      "ready-for-agent": "",
+      "ready-for-human": ""
+    },
+    "docs": {
+      "root": "",
+      "work": "",
+      "decisions": "",
+      "glossary": "",
+      "research": ""
+    },
+    "enforcement": {
+      "git_hooks": "",
+      "existing_ci": {
+        "host": "",
+        "runs": [],
+        "note": ""
+      },
+      "ci": {
+        "mode": "",
+        "why": ""
+      },
+      "claude_hooks": [],
+      "branch_protection": false
+    },
+    "source": ""
+  }
+}

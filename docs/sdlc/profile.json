@@ -1,0 +1,202 @@
+{
+  "stack": {
+    "root": "/home/user/loop-test-repo",
+    "file_source": "git",
+    "file_count": 3,
+    "git": {
+      "remote": "https://github.com/richardkabiling/loop-test-repo",
+      "branch": "claude/inspiring-brown-4v6xyd",
+      "commits": 1
+    },
+    "greenfield": true,
+    "stack": [
+      {
+        "category": "agent",
+        "tech": "claude-code-config",
+        "count": 1,
+        "paths": [
+          ".claude/"
+        ]
+      }
+    ],
+    "notable": [
+      {
+        "kind": "docs",
+        "tech": "documentation",
+        "count": 1,
+        "paths": [
+          "docs/"
+        ]
+      }
+    ],
+    "package_roots": [],
+    "commands": []
+  },
+  "gates": {
+    "codeowners": {
+      "file": null,
+      "rules": 0
+    },
+    "ci_manual_gates": [],
+    "pr_templates": [],
+    "doc_mentions": [],
+    "branch_protection": {
+      "branch": "claude/inspiring-brown-4v6xyd",
+      "protected": false
+    },
+    "environments": null,
+    "remote_checked": true,
+    "remote_note": ""
+  },
+  "pr": {
+    "host": "github",
+    "remote_url_host": "github.com",
+    "base": "claude/inspiring-brown-4v6xyd",
+    "templates": [],
+    "standards": [],
+    "codeowners": null,
+    "tier_signals": [],
+    "merge_settings": {
+      "default_branch": "claude/inspiring-brown-4v6xyd",
+      "squash": true,
+      "merge_commit": true,
+      "rebase": true,
+      "auto_merge": false,
+      "delete_branch_on_merge": false
+    },
+    "rulesets": [],
+    "risk_labels": [],
+    "remote_checked": true,
+    "remote_note": ""
+  },
+  "evals": {
+    "harness_suites": [],
+    "product_suites": [],
+    "ai_features": [],
+    "eval_dirs": [],
+    "scripts": [],
+    "ci": [],
+    "needs_product_evals": false
+  },
+  "personas": {
+    "points": {
+      "intent": [
+        {
+          "lens": "naive-reader",
+          "default": true
+        },
+        {
+          "lens": "end-user",
+          "default": true
+        },
+        {
+          "lens": "pre-mortem",
+          "default": true
+        }
+      ],
+      "design:requirements": [
+        {
+          "lens": "qa-test-designer",
+          "default": true
+        },
+        {
+          "lens": "naive-reader",
+          "default": true
+        },
+        {
+          "lens": "intent-conformance",
+          "default": true
+        }
+      ],
+      "design:solution": [
+        {
+          "lens": "skeptical-architect",
+          "default": true
+        },
+        {
+          "lens": "design-critic",
+          "default": true
+        },
+        {
+          "lens": "security",
+          "default": true
+        }
+      ],
+      "design:ux": [
+        {
+          "lens": "target-user",
+          "default": true
+        },
+        {
+          "lens": "accessibility",
+          "default": true
+        }
+      ],
+      "design:api": [
+        {
+          "lens": "api-consumer",
+          "default": true
+        },
+        {
+          "lens": "backward-compat",
+          "default": true
+        }
+      ],
+      "design:data": [
+        {
+          "lens": "data-integrity",
+          "default": true
+        }
+      ],
+      "design:infra": [
+        {
+          "lens": "sre",
+          "default": true
+        },
+        {
+          "lens": "security",
+          "default": true
+        }
+      ],
+      "design:docs": [
+        {
+          "lens": "new-user",
+          "default": true
+        },
+        {
+          "lens": "structure-style",
+          "default": true
+        }
+      ],
+      "review": [
+        {
+          "lens": "correctness",
+          "default": true
+        },
+        {
+          "lens": "spec-conformance",
+          "default": true
+        },
+        {
+          "lens": "test-quality",
+          "default": true
+        },
+        {
+          "lens": "silent-failure",
+          "default": true
+        }
+      ]
+    },
+    "persona_docs": []
+  },
+  "facts": {
+    "remote": "https://github.com/richardkabiling/loop-test-repo",
+    "default_branch": "claude/inspiring-brown-4v6xyd",
+    "contributors_90d": 1,
+    "team_signal": "solo",
+    "tool_signs": [
+      ".claude"
+    ]
+  },
+  "errors": []
+}

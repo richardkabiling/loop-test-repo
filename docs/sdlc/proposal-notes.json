@@ -1,0 +1,17 @@
+{
+  "preset": "product-team",
+  "kept_sections": [
+    "discovery",
+    "loops",
+    "review",
+    "skills",
+    "rules",
+    "context",
+    "setup"
+  ],
+  "open_items": [
+    "commands.test not found: ask the user (the agents rely on it)",
+    "commands.test_single not found: ask the user (the agents rely on it)",
+    "roles unknown: gate owners use role names (product-owner, tech-lead, code-owner); map them to people"
+  ]
+}
