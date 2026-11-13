@@ -14,21 +14,23 @@
       "source": "preset"
     },
     "loop.store": {
-      "value": "intent: attached to the GitHub epic issue AND committed to the repo (docs/work/<date>-<slug>/intent.md); design store asked on screen 3",
+      "value": "intent and design: summary + approval on the GitHub epic, full files committed in docs/work/<date>-<slug>/ (intent.md, spec.md, design/*.md); tickets as GitHub sub-issues",
       "source": "user",
-      "at": 1794536874
+      "at": 1794537402
     },
     "loop.gates": {
-      "value": "human after intent, design and review; automated elsewhere; discovered gates kept",
-      "source": "preset"
+      "value": "human after intent, design and review (approver: any team member except the work item's driver); automated plan, build, ship, improve; outside approvals (security sign-off, architecture review, demo, CAB) are post-merge and out of scope for the loop",
+      "source": "user",
+      "at": 1794537402
     },
     "loop.improve": {
       "value": "retro, incident, tune, scan",
       "source": "preset"
     },
     "loop.autonomy": {
-      "value": "plan mode for intent/design/plan, acceptEdits for build; AFK only for ready-for-agent tickets with executable acceptance criteria, if the user agrees",
-      "source": "preset"
+      "value": "plan mode for intent/design/plan; acceptEdits for build; AFK allowed for all ready-for-agent tickets with executable acceptance criteria; AFK may touch only the ticket's planned paths (infra/, .github/workflows/, persisted event schemas, journal migrations, secrets, lockfiles blocked; no force push, no terraform apply); limits 120 turns, 3 failed validations, $25; done = all verify commands pass; self-check typecheck/tests/diff-guard/Playwright; result = PR through the review gate",
+      "source": "user",
+      "at": 1794537402
     },
     "quality.strictness": {
       "value": "standard: diff size warns at 400 lines / 30 files, max_nits 5, up to 5 lenses per point, max_review_rounds 3",
@@ -116,6 +118,11 @@
       "value": "nothing yet (greenfield)",
       "source": "user",
       "at": 1794536874
+    },
+    "loop.design": {
+      "value": "requirements always; solution, api, data, infra, ux, docs per deliverable; plus STRIDE threat model in solution/infra when a change crosses a trust boundary",
+      "source": "user",
+      "at": 1794537402
     }
   },
   "screens_done": [
