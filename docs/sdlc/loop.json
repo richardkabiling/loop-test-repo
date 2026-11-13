@@ -195,24 +195,218 @@
   },
   "loops": {
     "upstream": {
-      "store": "",
-      "where": "",
-      "grilling": "",
-      "team_protocol": "",
-      "tickets": "",
-      "source": "",
-      "basis": ""
+      "store": "pr",
+      "grilling": "team",
+      "source": "default",
+      "basis": "propose.py; setup-sdlc-loops/references/upstream.md",
+      "where": "intent.md, spec.md and design/ land in their own docs PR, merged before planning",
+      "team_protocol": "open questions posted as one checklist comment; stakeholders answer in the thread; the agent folds answers in and re-grills until none is open"
     },
-    "phases": [],
+    "phases": [
+      {
+        "id": "intent",
+        "enabled": true,
+        "purpose": "Capture what and why as intent.md",
+        "strategy": "grilling",
+        "interaction": "interview",
+        "artifact": "docs/work/<slug>/intent.md",
+        "gate": {
+          "type": "human",
+          "owner": "product-owner",
+          "mechanism": "PR approval of intent.md"
+        },
+        "exit": "Problem, outcome, affected users and systems, constraints and open questions all filled; PO approved",
+        "source": "default",
+        "basis": "propose.py; https://claude.com/resources/articles/the-ai-native-sdlc-playbook"
+      },
+      {
+        "id": "design",
+        "enabled": true,
+        "purpose": "Turn the accepted intent into spec.md plus the design subphases the work item needs",
+        "strategy": "synthesize-then-goldfish-review",
+        "interaction": "review",
+        "artifact": "docs/work/<slug>/spec.md",
+        "gate": {
+          "type": "human",
+          "owner": "product-owner",
+          "mechanism": "PR approval of spec.md; tech lead joins for high-risk items"
+        },
+        "exit": "EARS acceptance criteria; concerns flagged and resolved; fresh-context review passed",
+        "source": "default",
+        "basis": "propose.py; https://github.com/google/elephant-goldfish-model",
+        "subphases": [
+          {
+            "id": "requirements",
+            "when": "always",
+            "artifact": "spec.md",
+            "approver": "product-owner"
+          },
+          {
+            "id": "solution",
+            "when": "new component or service, crosses deliverables, changes a boundary, or needs an ADR",
+            "artifact": "design/solution.md",
+            "approver": "tech-lead"
+          },
+          {
+            "id": "docs",
+            "when": "touches a deliverable whose design subphase is docs",
+            "artifact": "design/docs.md",
+            "approver": "docs-owner"
+          }
+        ]
+      },
+      {
+        "id": "plan",
+        "enabled": true,
+        "purpose": "plan.md plus vertical-slice tickets with blocking edges",
+        "strategy": "plan-mode-then-tracer-tickets",
+        "interaction": "review",
+        "artifact": "docs/work/<slug>/plan.md",
+        "gate": {
+          "type": "automated",
+          "checks": [
+            "plan.md has Files / Order / Risks / Proof",
+            "every acceptance criterion maps to a ticket with a verify command",
+            "fresh-context AI plan review: no blocking findings"
+          ],
+          "notify": "engineer",
+          "escalate_to": "engineer",
+          "escalate_when": "the plan touches infra, ci or migrations, or the AI review reports blocking findings"
+        },
+        "exit": "plan.md has Files / Order / Risks / Proof; every ticket fits one context window and lists its blockers",
+        "source": "default",
+        "basis": "propose.py; https://github.com/mattpocock/skills/blob/main/skills/engineering/to-tickets/SKILL.md"
+      },
+      {
+        "id": "build",
+        "enabled": true,
+        "purpose": "Build-validate: implement each ticket locally, test-first, and validate it before anything is shared",
+        "strategy": "tdd-with-stop-hook",
+        "interaction": "steer",
+        "artifact": "local branch with validation evidence in progress.md",
+        "validate": {
+          "checks": [
+            "typecheck",
+            "tests for the changed packages",
+            "diff-guard.sh",
+            "the ticket's verify command"
+          ],
+          "tests": "red-green: each acceptance criterion gets a failing test first",
+          "review": "none"
+        },
+        "gate": {
+          "type": "automated",
+          "checks": [
+            "validate checks green",
+            "ticket verify command passes",
+            "evidence recorded in progress.md"
+          ],
+          "notify": "engineer",
+          "escalate_to": "engineer",
+          "escalate_when": "validation still fails after 3 attempts, or an existing test had to change"
+        },
+        "exit": "Every acceptance criterion of the ticket has a passing test; validate checks green; evidence in progress.md; nothing pushed for review yet",
+        "source": "default",
+        "basis": "propose.py; https://code.claude.com/docs/en/best-practices"
+      },
+      {
+        "id": "review",
+        "enabled": true,
+        "purpose": "Open the PR, run the automated and AI reviews its tier calls for, resolve findings, get human approval",
+        "strategy": "pr-first-tiered-review",
+        "interaction": "review",
+        "artifact": "pull request with evidence, tier label and resolved findings",
+        "pr_filed": "start",
+        "gate": {
+          "type": "human",
+          "owner": "code-owner",
+          "mechanism": "approvals per PR tier (review.pr.tiers) through branch protection or rulesets; conversation resolution; the authoring agent can't approve"
+        },
+        "exit": "Checks green; AI and lens findings resolved or dismissed with a reason; approvals meet the PR's tier",
+        "source": "default",
+        "basis": "propose.py; docs/research/07-pr-venues-and-tiering.md"
+      },
+      {
+        "id": "ship",
+        "enabled": true,
+        "purpose": "Release behind flags with progressive rollout and rehearsed rollback",
+        "strategy": "trunk-based-flags-progressive",
+        "interaction": "approve",
+        "artifact": "release + release notes",
+        "gate": {
+          "type": "automated",
+          "checks": [
+            "trunk green",
+            "deploy health checks",
+            "rollback path verified"
+          ],
+          "notify": "release-manager",
+          "escalate_to": "release-manager",
+          "escalate_when": "a health check fails or the release touches a critical-tier path"
+        },
+        "exit": "Deployed; health checks green; rollback path verified",
+        "source": "default",
+        "basis": "propose.py; https://claude.com/resources/articles/the-ai-native-sdlc-playbook"
+      },
+      {
+        "id": "improve",
+        "enabled": true,
+        "purpose": "Turn signals, incidents and session lessons into new intents and evidence-backed harness changes",
+        "strategy": "retro-plus-eval-suite",
+        "interaction": "interview",
+        "artifact": "docs/sdlc/improve/<yyyy-mm-dd>-<slug>.md",
+        "gate": {
+          "type": "automated",
+          "checks": [
+            "product findings become intents (they pass the intent gate)",
+            "harness changes ship as PRs (they pass the review phase gate)",
+            "eval suite passes before and after a harness change"
+          ],
+          "notify": "service-owner"
+        },
+        "exit": "Every finding is an intent, a harness PR, or a recorded no-op; evals pass after harness changes",
+        "source": "default",
+        "basis": "propose.py; https://github.com/google-research/harness2",
+        "modes": [
+          "retro",
+          "incident",
+          "tune",
+          "scan"
+        ],
+        "triggers": [
+          "after each shipped work item",
+          "after an incident",
+          "weekly signals report",
+          "after a model or tool upgrade"
+        ],
+        "research": "researcher subagent checks root causes and current practice against primary sources before a harness change; notes in docs/sdlc/research/",
+        "evals": "review.evals suite 'harness' (run-evals.sh --suite harness, before on the base and after on the branch)",
+        "change_classes": [
+          "product",
+          "phase",
+          "harness",
+          "convention",
+          "code-part-convention",
+          "no-op"
+        ]
+      }
+    ],
     "autonomy": {
-      "default_mode": "",
-      "afk_allowed_for": [],
+      "default_mode": "plan-then-acceptEdits",
+      "afk_allowed_for": [
+        "ready-for-agent tickets with executable acceptance criteria (if the user agrees)"
+      ],
       "limits": {
-        "max_turns": 0
+        "max_turns": 60
       }
     },
-    "source": "",
-    "human_gates": []
+    "human_gates": [
+      "intent",
+      "design",
+      "review"
+    ],
+    "source": "default",
+    "basis": "propose.py"
   },
   "deliverables": [
     {
@@ -442,102 +636,321 @@
     }
   ],
   "review": {
-    "default_venue": "",
-    "artifacts": [],
+    "default_venue": "both",
+    "artifacts": [
+      {
+        "artifact": "intent",
+        "venue": "pr",
+        "reviewers": [
+          {
+            "type": "human",
+            "role": "product-owner"
+          }
+        ],
+        "record": "PR review on the docs PR (intent.md)",
+        "blocking": "PO approval is the gate"
+      },
+      {
+        "artifact": "design",
+        "venue": "both",
+        "reviewers": [
+          {
+            "type": "ai",
+            "how": "fresh-context reviewer subagent",
+            "when": "before the gate request"
+          },
+          {
+            "type": "human",
+            "role": "product-owner"
+          }
+        ],
+        "record": "AI findings resolved in spec.md 'Review log'; human review on the PR",
+        "blocking": "PO approval is the gate; AI review is advisory"
+      },
+      {
+        "artifact": "plan",
+        "venue": "local",
+        "reviewers": [
+          {
+            "type": "ai",
+            "how": "fresh-context plan reviewer subagent",
+            "when": "before tickets are created"
+          }
+        ],
+        "record": "plan.md 'Review log'; engineer notified with the plan link",
+        "blocking": "automated gate: AI review must report no blocking findings; escalates to the engineer for high-risk plans"
+      },
+      {
+        "artifact": "validate",
+        "venue": "local",
+        "reviewers": [
+          {
+            "type": "automated",
+            "how": "typecheck, tests, diff-guard, ticket verify command"
+          }
+        ],
+        "record": "progress.md evidence",
+        "blocking": "automated build gate; no AI or human review by default"
+      },
+      {
+        "artifact": "code",
+        "venue": "pr",
+        "reviewers": [
+          {
+            "type": "automated",
+            "how": "scripts/sdlc/pr-checks.sh (check-loop, protected paths, diff-guard, tier label) run by /sdlc-review; existing CI as it is",
+            "when": "before review is requested"
+          },
+          {
+            "type": "ai",
+            "how": "persona lenses (context-less, deduped)",
+            "when": "right after the PR is opened, per tier"
+          },
+          {
+            "type": "human",
+            "role": "code-owner"
+          }
+        ],
+        "record": "lens findings in reviews/ ledger and one summary comment on the PR; resolved threads",
+        "blocking": "approvals per PR tier via branch protection; AI reviewers never approve or block"
+      },
+      {
+        "artifact": "release",
+        "venue": "pr",
+        "reviewers": [
+          {
+            "type": "human",
+            "role": "release-manager"
+          }
+        ],
+        "record": "protected-environment approval",
+        "blocking": "release-manager approval"
+      },
+      {
+        "artifact": "improve",
+        "venue": "pr",
+        "reviewers": [
+          {
+            "type": "ai",
+            "how": "local reviewer subagent",
+            "when": "before the harness PR"
+          },
+          {
+            "type": "human",
+            "role": "code-owner"
+          }
+        ],
+        "record": "harness PR with before/after eval results",
+        "blocking": "review phase gate (approvals per PR tier)"
+      }
+    ],
     "pr": {
-      "host": "",
-      "filed": "",
+      "host": "github",
+      "filed": "start-of-review",
       "draft": false,
-      "title": "",
-      "body": "",
-      "tiering": "",
-      "tiers": [],
-      "source": "",
-      "basis": ""
+      "title": "imperative summary",
+      "body": "PR template + evidence (verify output, screenshots) + tier and why",
+      "tiering": "scripts/sdlc/pr-tier.sh computes the tier; /<prefix>-review labels the PR; pr-checks.sh verifies the label",
+      "tiers": [
+        {
+          "id": "standard",
+          "default": true,
+          "human_approvals": 1,
+          "required_roles": [
+            "code-owner"
+          ],
+          "ai": [
+            "lenses"
+          ],
+          "why": "default tier"
+        },
+        {
+          "id": "low",
+          "match": [
+            "docs/**",
+            "**/*.md"
+          ],
+          "human_approvals": 1,
+          "required_roles": [],
+          "ai": [],
+          "why": "docs-only changes"
+        }
+      ],
+      "source": "default",
+      "basis": "propose.py; setup-sdlc-review/references/venues.md#pr-tiers"
     },
     "evals": {
-      "run_in": "",
-      "suites": [],
-      "agent_cmd": "",
-      "grader_cmd": "",
-      "max_cost_usd": 0,
-      "on_fail": "",
-      "rediscover": "",
-      "source": "",
-      "basis": ""
+      "run_in": "review",
+      "suites": [
+        {
+          "id": "harness",
+          "kind": "harness",
+          "where": "local",
+          "path": "docs/sdlc/evals/evals.json",
+          "triggers": [
+            "AGENTS.md",
+            "CLAUDE.md",
+            "REVIEW.md",
+            ".agents/**",
+            ".claude/**",
+            ".cursor/**",
+            "scripts/sdlc/**",
+            "docs/sdlc/loop.json",
+            "docs/sdlc/lenses/**",
+            "docs/sdlc/personas.md"
+          ],
+          "repeat": 1,
+          "threshold": 1.0,
+          "timeout_min": 20,
+          "max_scenarios": 12,
+          "source": "default",
+          "basis": "propose.py; setup-sdlc-evals"
+        }
+      ],
+      "agent_cmd": "claude -p --output-format json --max-turns 40 --permission-mode acceptEdits",
+      "grader_cmd": "claude -p --output-format json --max-turns 1",
+      "max_cost_usd": 10,
+      "on_fail": "major finding on the PR: fix and re-run, or a human accepts the regression with a reason",
+      "rediscover": "check-loop.sh runs detect-evals.sh and fails when a suite in the repo isn't listed here",
+      "source": "default",
+      "basis": "propose.py; setup-sdlc-evals"
     },
     "noise_controls": {
-      "max_nits": 0,
-      "report": "",
-      "verify_before_report": false,
-      "skip_paths": [],
-      "comment_labels": "",
-      "max_review_rounds": 0
+      "max_nits": 5,
+      "report": "correctness, security, spec gaps; skip style the tools enforce",
+      "verify_before_report": true,
+      "skip_paths": [
+        "generated files",
+        "lockfiles"
+      ],
+      "comment_labels": "conventional-comments",
+      "max_review_rounds": 3
     },
-    "ai_comment_policy": "",
-    "new_reviewer_rollout": "",
-    "source": "",
-    "basis": "",
+    "ai_comment_policy": "AI reviewers comment, never approve; findings carry severity and evidence; one summary comment updated in place",
+    "new_reviewer_rollout": "shadow mode: post to a log or draft for two weeks, then promote",
+    "source": "default",
+    "basis": "propose.py; setup-sdlc-review/references/venues.md",
     "personas": {
       "points": {
-        "intent": [],
-        "design:requirements": [],
-        "design:solution": [],
-        "design:ux": [],
-        "design:api": [],
-        "design:data": [],
-        "design:infra": [],
-        "review": []
+        "intent": [
+          "naive-reader",
+          "end-user",
+          "pre-mortem"
+        ],
+        "design:requirements": [
+          "qa-test-designer",
+          "naive-reader",
+          "intent-conformance"
+        ],
+        "design:solution": [
+          "skeptical-architect",
+          "design-critic",
+          "security"
+        ],
+        "design:docs": [
+          "new-user",
+          "structure-style"
+        ],
+        "review": [
+          "correctness",
+          "spec-conformance",
+          "test-quality",
+          "silent-failure"
+        ]
       },
-      "max_rounds_doc": 0,
+      "max_rounds_doc": 2,
       "surface": {
-        "intent": "",
-        "design": "",
-        "review": "",
-        "note": ""
+        "intent": "silent",
+        "design": "auto",
+        "review": "auto"
       },
       "discovered": [],
-      "context": "",
-      "dedupe": "",
-      "source": "",
-      "basis": ""
+      "context": "context-less: fresh subagent per lens, only the review point's inputs + the lens file, no CLAUDE.md, never the conversation",
+      "dedupe": "scripts/sdlc/dedupe-findings.py with a per-work-item ledger",
+      "source": "default",
+      "basis": "https://github.com/google/elephant-goldfish-model; docs/research/05-persona-review.md"
     }
   },
   "skills": {
-    "family": "",
+    "family": "mattpocock",
     "per_phase": {
-      "intent": [],
-      "design": [],
-      "plan": [],
-      "build": [],
-      "review": [],
+      "intent": [
+        "grill-with-docs",
+        "domain-modeling"
+      ],
+      "design": [
+        "to-spec"
+      ],
+      "plan": [
+        "to-tickets"
+      ],
+      "build": [
+        "tdd",
+        "diagnosing-bugs"
+      ],
+      "review": [
+        "code-review",
+        "pr"
+      ],
       "ship": [],
-      "improve": []
+      "improve": [
+        "retro"
+      ]
     },
-    "cross_cutting": [],
-    "install": [],
-    "source": ""
+    "cross_cutting": [
+      "context7",
+      "playwright"
+    ],
+    "install": [
+      {
+        "name": "mattpocock-skills",
+        "how": "claude plugin install mattpocock-skills@claude-plugins-official",
+        "tools": [
+          "claude-code"
+        ]
+      }
+    ],
+    "source": "default",
+    "basis": "propose.py; setup-sdlc-skills/references/catalog.md"
   },
   "rules": {
-    "global": [],
-    "per_deliverable": {
-      "web": [],
-      "infra": []
-    },
+    "global": [
+      {
+        "topic": "commits",
+        "standard": "Conventional Commits 1.0.0",
+        "enforced_by": "commit-msg hook (pre-commit)"
+      }
+    ],
+    "per_deliverable": {},
     "scoped": [],
-    "source": "",
-    "researched": ""
+    "source": "default",
+    "basis": "propose.py; setup-sdlc-rules/references/standards.md"
   },
   "context": {
-    "strategies": [],
-    "code_graph": "",
-    "doc_graph": "",
-    "read_deny": [],
+    "strategies": [
+      "subagents-for-research-and-review",
+      "progressive-disclosure",
+      "front-loaded-lead-lines",
+      "scripts-over-reasoning",
+      "lean-root-instructions",
+      "fresh-session-per-phase",
+      "doc-graph",
+      "repo-map",
+      "lsp-code-intelligence",
+      "read-deny-noise"
+    ],
+    "code_graph": "typescript-lsp + docs/sdlc/REPO_MAP.md (repo-map.sh)",
+    "doc_graph": "docs/sdlc/MAP.md",
+    "read_deny": [
+      "**/dist/**",
+      "src/gen/**"
+    ],
     "state_files": {
-      "progress": "",
-      "feature_list": ""
+      "progress": "docs/work/<slug>/progress.md",
+      "feature_list": "docs/work/<slug>/tickets.json"
     },
-    "source": ""
+    "source": "default",
+    "basis": "propose.py; setup-sdlc-context/references/strategies.md"
   },
   "guardrails": [
     {
@@ -652,26 +1065,30 @@
       "ready-for-human": "ready-for-human"
     },
     "docs": {
-      "root": "",
-      "work": "",
-      "decisions": "",
-      "glossary": "",
-      "research": ""
+      "root": "docs",
+      "work": "docs/work",
+      "decisions": "docs/decisions",
+      "glossary": "GLOSSARY.md",
+      "research": "docs/sdlc/research"
     },
     "enforcement": {
-      "git_hooks": "",
+      "git_hooks": "the existing hook manager, else plain .githooks (no new dependency)",
       "existing_ci": {
-        "host": "",
-        "runs": [],
-        "note": ""
+        "host": "none",
+        "note": "read only: the loop never edits existing CI"
       },
       "ci": {
-        "mode": "",
-        "why": ""
+        "mode": "none",
+        "why": "the loop's checks run locally; CI changes only when the user asks"
       },
-      "claude_hooks": [],
-      "branch_protection": false
+      "claude_hooks": [
+        "PostToolUse:format",
+        "Stop:typecheck",
+        "PreToolUse:protect-scoped-paths"
+      ],
+      "branch_protection": true
     },
-    "source": ""
+    "source": "default",
+    "basis": "propose.py"
   }
 }
