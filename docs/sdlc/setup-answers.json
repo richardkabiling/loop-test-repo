@@ -19,18 +19,18 @@
       "at": 1794537402
     },
     "loop.gates": {
-      "value": "human after intent, design and review (approver: any team member except the work item's driver); automated plan, build, ship, improve; outside approvals (security sign-off, architecture review, demo, CAB) are post-merge and out of scope for the loop",
+      "value": "human after intent, design and review (approver: any team member except the driver); the review PR approval is the deploy gate: merge to main triggers deploys of everything; ship is automated CD after merge; outside approvals are post-merge and out of scope",
       "source": "user",
-      "at": 1794537402
+      "at": 1794537868
     },
     "loop.improve": {
       "value": "retro, incident, tune, scan",
       "source": "preset"
     },
     "loop.autonomy": {
-      "value": "plan mode for intent/design/plan; acceptEdits for build; AFK allowed for all ready-for-agent tickets with executable acceptance criteria; AFK may touch only the ticket's planned paths (infra/, .github/workflows/, persisted event schemas, journal migrations, secrets, lockfiles blocked; no force push, no terraform apply); limits 120 turns, 3 failed validations, $25; done = all verify commands pass; self-check typecheck/tests/diff-guard/Playwright; result = PR through the review gate",
+      "value": "plan mode for intent/design/plan; acceptEdits for build; AFK allowed for all ready-for-agent tickets with executable acceptance criteria, through build-validate and review up to (not including) merge to main; AFK may touch any path in the repo, including infra/ and workflows, because nothing deploys before merge; only actions that bypass the PR gate are blocked (push to main, force push, terraform apply, reading secrets); append-only rules for applied migrations and persisted events still hold; limits 120 turns, 3 failed validations, $25; result = PR, whose human approval is the deploy gate",
       "source": "user",
-      "at": 1794537402
+      "at": 1794537868
     },
     "quality.strictness": {
       "value": "standard: diff size warns at 400 lines / 30 files, max_nits 5, up to 5 lenses per point, max_review_rounds 3",

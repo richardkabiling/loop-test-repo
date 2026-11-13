@@ -342,7 +342,7 @@
         "gate": {
           "type": "human",
           "owner": "team-member (not the driver)",
-          "mechanism": "approvals per PR tier (review.pr.tiers) through branch protection or rulesets; conversation resolution; the authoring agent can't approve"
+          "mechanism": "approvals per PR tier (review.pr.tiers) through branch protection or rulesets; conversation resolution; the authoring agent can't approve; this approval is the deploy gate: merge to main triggers deploys"
         },
         "exit": "Checks green; AI and lens findings resolved or dismissed with a reason; approvals meet the PR's tier",
         "source": "default",
@@ -351,14 +351,15 @@
       {
         "id": "ship",
         "enabled": true,
-        "purpose": "Release behind flags with progressive rollout and rehearsed rollback",
+        "purpose": "Merge to main triggers CD: deploy everything (Terraform apply, image push, API and web deploy) behind flags, with health checks and rollback",
         "strategy": "trunk-based-flags-progressive",
-        "interaction": "approve",
+        "interaction": "automated",
         "artifact": "release + release notes",
         "gate": {
           "type": "automated",
           "checks": [
-            "trunk green",
+            "merged to main through an approved PR",
+            "CD pipeline green",
             "deploy health checks",
             "rollback path verified"
           ],
@@ -416,7 +417,7 @@
     "autonomy": {
       "default_mode": "plan-then-acceptEdits",
       "afk_allowed_for": [
-        "all ready-for-agent tickets with executable acceptance criteria"
+        "all ready-for-agent tickets with executable acceptance criteria: build-validate and review, up to merge to main"
       ],
       "limits": {
         "max_turns": 120,
@@ -426,9 +427,9 @@
       "afk": {
         "done": "every acceptance criterion's verify command passes",
         "self_check": "just typecheck, just test, diff-guard.sh, the ticket's verify command; Playwright screenshot diffs for web tickets",
-        "may_touch": "only the paths in the ticket's plan; blocked: infra/, .github/workflows/, backend/**/serialization/, backend/src/main/resources/db/, .env*, secrets, lockfiles; no force push, no terraform apply",
+        "may_touch": "any path in the repo, including infra/ and .github/workflows/ (nothing deploys before merge); blocked: push or merge to main, force push, terraform apply, reading or printing secrets; append-only rules for applied migrations and persisted events still apply",
         "stops": "120 turns, 3 failed validations, $25 budget, or completion promise",
-        "result": "agent-opened PR through the review gate; signed off by any team member except the work item's driver"
+        "result": "agent-opened PR; its human approval (any team member except the driver) is the deploy gate"
       },
       "source": "user",
       "basis": "setup-sdlc-loops/references/interaction.md#unattended-runs"
