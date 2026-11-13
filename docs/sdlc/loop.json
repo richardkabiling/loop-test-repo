@@ -11,7 +11,7 @@
   },
   "discovery": {
     "mode": "greenfield",
-    "summary": "Greenfield monorepo: Scala + Apache Pekko API (sbt, Pekko Persistence on Postgres) in backend/, TypeScript + React + Vite web app (pnpm) in frontend/, OpenAPI contract between them , Terraform for the API's infrastructure in infra/, GitHub PRs + GitHub Actions, root justfile",
+    "summary": "Greenfield monorepo: Scala + Apache Pekko API (sbt, Pekko Persistence on Postgres) in backend/, TypeScript + React + Vite web app (pnpm) in frontend/, OpenAPI contract between them, Terraform for the API's infrastructure in infra/, GitHub PRs + GitHub Actions, root justfile",
     "stack": [
       {
         "category": "lang",
