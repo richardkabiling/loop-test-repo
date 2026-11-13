@@ -81,9 +81,9 @@
       "at": 1794536133
     },
     "repo.deliverables": {
-      "value": "As proposed: adr -> db-schema -> api -> web; ci-cd, user-guide, stakeholder-docs alongside",
+      "value": "adr -> infra (Terraform for the API's infrastructure) -> ci-cd; adr -> db-schema; api-contract (OpenAPI YAML, contract-first) -> api -> web; docs: user-guide, tech-ops-manual (runbooks, deploy, incident, on-call), business-ops-manual (business processes, support, admin procedures); stakeholder-docs last",
       "source": "user",
-      "at": 1794536134
+      "at": 1794536485
     }
   },
   "screens_done": []

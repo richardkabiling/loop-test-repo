@@ -11,7 +11,7 @@
   },
   "discovery": {
     "mode": "greenfield",
-    "summary": "Greenfield monorepo: Scala + Apache Pekko API (sbt, Pekko Persistence on Postgres) in backend/, TypeScript + React + Vite web app (pnpm) in frontend/, OpenAPI contract between them, GitHub PRs + GitHub Actions, root justfile",
+    "summary": "Greenfield monorepo: Scala + Apache Pekko API (sbt, Pekko Persistence on Postgres) in backend/, TypeScript + React + Vite web app (pnpm) in frontend/, OpenAPI contract between them , Terraform for the API's infrastructure in infra/, GitHub PRs + GitHub Actions, root justfile",
     "stack": [
       {
         "category": "lang",
@@ -70,6 +70,11 @@
       {
         "category": "ci",
         "tech": "github-actions"
+      },
+      {
+        "category": "iac",
+        "tech": "terraform",
+        "path": "infra/"
       }
     ],
     "commands": {
@@ -139,6 +144,12 @@
         "path": "docs/decisions/",
         "kind": "docs",
         "confirmed": true
+      },
+      {
+        "path": "infra/",
+        "kind": "iac",
+        "confirmed": true,
+        "note": "plan before apply; the agent never applies; plan output in the PR"
       }
     ],
     "existing_agent_config": [
@@ -212,6 +223,42 @@
       "basis": "propose.py; setup-sdlc-deliverables/references/deliverables.md"
     },
     {
+      "id": "infra",
+      "kind": "iac-terraform",
+      "path": "infra/",
+      "depends_on": [
+        "adr"
+      ],
+      "design": {
+        "subphase": "infra",
+        "method": ""
+      },
+      "build": "",
+      "test": "",
+      "review": "",
+      "ship": "",
+      "source": "user",
+      "basis": "setup-sdlc-deliverables/references/deliverables.md"
+    },
+    {
+      "id": "ci-cd",
+      "kind": "ci-cd",
+      "path": ".github/workflows/",
+      "depends_on": [
+        "infra"
+      ],
+      "design": {
+        "subphase": "",
+        "method": ""
+      },
+      "build": "",
+      "test": "",
+      "review": "",
+      "ship": "",
+      "source": "user",
+      "basis": "setup-sdlc-deliverables/references/deliverables.md"
+    },
+    {
       "id": "db-schema",
       "kind": "db-schema",
       "path": "backend/src/main/resources/db/; backend/**/serialization/",
@@ -230,12 +277,32 @@
       "basis": "setup-sdlc-deliverables/references/deliverables.md"
     },
     {
+      "id": "api-contract",
+      "kind": "openapi-contract",
+      "path": "api/openapi.yaml",
+      "depends_on": [
+        "adr"
+      ],
+      "design": {
+        "subphase": "api",
+        "method": ""
+      },
+      "build": "",
+      "test": "",
+      "review": "",
+      "ship": "",
+      "source": "user",
+      "basis": "setup-sdlc-deliverables/references/deliverables.md"
+    },
+    {
       "id": "api",
       "kind": "http-api",
-      "path": "backend/; api/openapi.yaml",
+      "path": "backend/",
       "depends_on": [
         "adr",
-        "db-schema"
+        "db-schema",
+        "api-contract",
+        "infra"
       ],
       "design": {
         "subphase": "api",
@@ -253,6 +320,7 @@
       "kind": "web-app",
       "path": "frontend/",
       "depends_on": [
+        "api-contract",
         "api"
       ],
       "design": {
@@ -267,26 +335,12 @@
       "basis": "setup-sdlc-deliverables/references/deliverables.md"
     },
     {
-      "id": "ci-cd",
-      "kind": "ci-cd",
-      "path": ".github/workflows/",
-      "depends_on": [],
-      "design": {
-        "subphase": "",
-        "method": ""
-      },
-      "build": "",
-      "test": "",
-      "review": "",
-      "ship": "",
-      "source": "user",
-      "basis": "setup-sdlc-deliverables/references/deliverables.md"
-    },
-    {
       "id": "user-guide",
       "kind": "user-guide",
       "path": "README.md",
-      "depends_on": [],
+      "depends_on": [
+        "web"
+      ],
       "design": {
         "subphase": "docs",
         "method": "docs design per the docs subphase"
@@ -299,10 +353,53 @@
       "basis": "propose.py; setup-sdlc-deliverables/references/deliverables.md"
     },
     {
+      "id": "tech-ops-manual",
+      "kind": "ops-manual",
+      "path": "docs/ops/tech/",
+      "depends_on": [
+        "api",
+        "infra",
+        "ci-cd"
+      ],
+      "design": {
+        "subphase": "docs",
+        "method": ""
+      },
+      "build": "",
+      "test": "",
+      "review": "",
+      "ship": "",
+      "source": "user",
+      "basis": "setup-sdlc-deliverables/references/deliverables.md"
+    },
+    {
+      "id": "business-ops-manual",
+      "kind": "ops-manual",
+      "path": "docs/ops/business/",
+      "depends_on": [
+        "web",
+        "api"
+      ],
+      "design": {
+        "subphase": "docs",
+        "method": ""
+      },
+      "build": "",
+      "test": "",
+      "review": "",
+      "ship": "",
+      "source": "user",
+      "basis": "setup-sdlc-deliverables/references/deliverables.md"
+    },
+    {
       "id": "stakeholder-docs",
       "kind": "stakeholder-docs",
       "path": "docs/work/",
-      "depends_on": [],
+      "depends_on": [
+        "user-guide",
+        "tech-ops-manual",
+        "business-ops-manual"
+      ],
       "design": {
         "subphase": "",
         "method": ""
