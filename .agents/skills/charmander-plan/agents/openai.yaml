@@ -1,0 +1,5 @@
+interface:
+  display_name: "charmander-plan"
+  short_description: "Plan and vertical-slice tickets as GitHub sub-issues"
+policy:
+  allow_implicit_invocation: false

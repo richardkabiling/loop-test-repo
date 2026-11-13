@@ -1,0 +1,22 @@
+# Git hooks for every tool and human (install: `lefthook install`).
+pre-commit:
+  commands:
+    protect-paths:
+      run: bash scripts/sdlc/protect-paths.sh --staged
+    diff-guard:
+      run: bash scripts/sdlc/diff-guard.sh --staged
+    scalafmt:
+      glob: "backend/**/*.{scala,sbt}"
+      run: command -v scalafmt >/dev/null && scalafmt --test {staged_files} || true
+    prettier-eslint:
+      glob: "frontend/**/*.{ts,tsx,js,json,css}"
+      run: cd frontend && [ -d node_modules ] && pnpm exec prettier --check {staged_files} && pnpm exec eslint {staged_files} || true
+    terraform-fmt:
+      glob: "infra/**/*.tf"
+      run: command -v terraform >/dev/null && terraform fmt -check {staged_files} || true
+commit-msg:
+  commands:
+    conventional-commits:
+      run: |
+        head -1 {1} | grep -qE '^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9-]+\))?!?: .+' \
+          || { echo "commit-msg: use Conventional Commits, e.g. 'feat(api): add order cancellation'"; exit 1; }

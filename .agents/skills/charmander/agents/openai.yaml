@@ -1,0 +1,5 @@
+interface:
+  display_name: "charmander"
+  short_description: "Status of every work item and the next step"
+policy:
+  allow_implicit_invocation: false

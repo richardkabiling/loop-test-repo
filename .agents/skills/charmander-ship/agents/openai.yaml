@@ -1,0 +1,5 @@
+interface:
+  display_name: "charmander-ship"
+  short_description: "Release notes and CD rollout after merge to main"
+policy:
+  allow_implicit_invocation: false

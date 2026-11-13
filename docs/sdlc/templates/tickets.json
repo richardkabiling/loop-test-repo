@@ -1,0 +1,14 @@
+[
+  {
+    "id": "T1",
+    "title": "<tracer-bullet slice>",
+    "deliverables": ["<deliverable id>"],
+    "blocked_by": [],
+    "acceptance": ["AC1"],
+    "verify": "<command that proves it>",
+    "label": "ready-for-agent",
+    "passes": false,
+    "pr": null,
+    "merged": false
+  }
+]

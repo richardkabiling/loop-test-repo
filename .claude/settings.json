@@ -1,13 +1,96 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(bash scripts/sdlc/sdlc-status.sh:*)",
+      "Bash(bash scripts/sdlc/pr-tier.sh:*)",
+      "Bash(bash scripts/sdlc/pr-checks.sh:*)",
+      "Bash(bash scripts/sdlc/detect-evals.sh:*)",
+      "Bash(bash scripts/sdlc/run-evals.sh --dry-run:*)",
+      "Bash(bash scripts/sdlc/check-loop.sh:*)",
+      "Bash(bash scripts/sdlc/sync-agent-files.sh:*)",
+      "Bash(python3 scripts/sdlc/validate-loop.py:*)"
+    ],
+    "deny": [
+      "Read(./**/target/**)",
+      "Read(./frontend/dist/**)",
+      "Read(./**/node_modules/**)",
+      "Read(./frontend/src/api/gen/**)",
+      "Read(./infra/.terraform/**)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Bash(terraform apply:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git push origin main:*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit|Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR\"/scripts/sdlc/protect-paths.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR\"/scripts/sdlc/format-edited.sh -- just fmt-file"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR\"/scripts/sdlc/stop-check.sh --max-blocks 3 -- 'bash scripts/sdlc/diff-guard.sh --worktree && just typecheck && just test-changed'"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR\"/scripts/sdlc/sdlc-status.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "sdlc-loop@sdlc-loop": true,
+    "mattpocock-skills@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "context7@claude-plugins-official": true,
+    "playwright@claude-plugins-official": true,
+    "github@claude-plugins-official": true,
+    "terraform@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": true
+  },
   "extraKnownMarketplaces": {
     "sdlc-loop": {
       "source": {
         "source": "github",
         "repo": "richardkabiling/creating-sdlc-loop"
       }
+    },
+    "claude-plugins-official": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
+      }
     }
-  },
-  "enabledPlugins": {
-    "sdlc-loop@sdlc-loop": true
   }
 }

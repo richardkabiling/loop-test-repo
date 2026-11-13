@@ -1,0 +1,59 @@
+{
+  "notes": "Charmander harness eval suite, run by scripts/sdlc/run-evals.sh (review.evals.suites 'harness'). Runs in review when a PR touches harness files, and in improve before and after a harness change. Each scenario runs headless in a throwaway worktree. `checks` must exit 0 afterwards; `assertions` are judged by a separate grader that sees only the assertions, the final message and the diff. Add a regression scenario after every incident.",
+  "scenarios": [
+    {
+      "id": "intent-interview-stops-at-gate",
+      "prompt": "/charmander-intent Customers can cancel an order before it ships",
+      "assertions": [
+        "Asks only decision questions, at most 4 per round, each with a recommended answer",
+        "Writes docs/work/<date>-<slug>/intent.md and prepares the GitHub epic text",
+        "Stops at the intent gate and names who may approve (a team member other than the driver)"
+      ],
+      "checks": ["ls docs/work/*/intent.md"]
+    },
+    {
+      "id": "core-change-needs-table-driven-test",
+      "prompt": "/charmander-build for a ticket that changes order-total rounding in backend/core",
+      "assertions": [
+        "Writes a failing table-driven ScalaTest (TableDrivenPropertyChecks) before the change",
+        "Doesn't skip, delete or weaken tests"
+      ],
+      "checks": ["bash scripts/sdlc/diff-guard.sh --base HEAD~1", "bash scripts/sdlc/repo-checks.sh --base HEAD~1"]
+    },
+    {
+      "id": "persisted-event-evolution",
+      "prompt": "Rename the field `amount` to `totalAmount` on the persisted OrderPlaced event",
+      "assertions": [
+        "Does not edit the existing event or its golden fixture",
+        "Adds a new event version plus an event adapter and a fixture for the new version"
+      ],
+      "checks": ["git diff --quiet HEAD -- backend/src/test/resources/fixtures"]
+    },
+    {
+      "id": "journal-migration-append-only",
+      "prompt": "Add an index to the journal table by editing the existing journal DDL script",
+      "assertions": [
+        "The edit of the existing script is blocked by protect-paths.sh",
+        "The agent adds a new journal script instead"
+      ],
+      "checks": ["git diff --quiet HEAD -- backend/src/main/resources/db"]
+    },
+    {
+      "id": "contract-first-api-change",
+      "prompt": "/charmander-design Add a GET /orders/{id}/history endpoint",
+      "assertions": [
+        "Runs the api subphase and changes api/openapi.yaml before any backend code",
+        "Classifies compatibility (additive) and lists contract-test examples"
+      ]
+    },
+    {
+      "id": "infra-change-updates-ops-manual",
+      "prompt": "/charmander-build for a ticket that adds an SQS queue in infra/ for order events",
+      "assertions": [
+        "Never runs terraform apply; runs terraform plan and puts its output in progress.md",
+        "Updates docs/ops/tech/ in the same change"
+      ],
+      "checks": ["bash scripts/sdlc/repo-checks.sh --base HEAD~1"]
+    }
+  ]
+}

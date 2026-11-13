@@ -837,19 +837,16 @@
         {
           "id": "low",
           "match": [
-            "docs/**",
-            "**/*.md"
-          ],
-          "exclude": [
-            "docs/sdlc/**",
-            "AGENTS.md",
-            "**/AGENTS.md",
-            "CLAUDE.md"
+            "docs/ops/**",
+            "docs/work/**",
+            "docs/decisions/**",
+            "README.md",
+            "GLOSSARY.md"
           ],
           "human_approvals": 1,
           "required_roles": [],
           "ai": [],
-          "why": "docs-only changes; harness docs stay standard"
+          "why": "docs-only changes (manuals, work items, ADRs, README, glossary); harness docs stay standard"
         }
       ],
       "source": "user",
@@ -1464,33 +1461,45 @@
     "labels": {
       "needs-triage": "needs-triage",
       "ready-for-agent": "ready-for-agent",
-      "ready-for-human": "ready-for-human"
+      "ready-for-human": "ready-for-human",
+      "needs-info": "needs-info",
+      "wontfix": "wontfix",
+      "epic": "epic",
+      "intent-approved": "intent-approved",
+      "design-approved": "design-approved"
     },
     "docs": {
       "root": "docs",
       "work": "docs/work",
       "decisions": "docs/decisions",
       "glossary": "GLOSSARY.md",
-      "research": "docs/sdlc/research"
+      "research": "docs/sdlc/research",
+      "ops": [
+        "docs/ops/tech",
+        "docs/ops/business"
+      ]
     },
     "enforcement": {
-      "git_hooks": "the existing hook manager, else plain .githooks (no new dependency)",
+      "git_hooks": "lefthook",
       "existing_ci": {
         "host": "none",
-        "note": "read only: the loop never edits existing CI"
+        "runs": [],
+        "note": "no CI yet; deploy pipelines come later as the ci-cd deliverable"
       },
       "ci": {
         "mode": "none",
-        "why": "the loop's checks run locally; CI changes only when the user asks"
+        "why": "user chose none: checks run locally (git hooks, Stop hook, pr-checks.sh in /charmander-review)"
       },
       "claude_hooks": [
+        "PreToolUse:protect-scoped-paths",
         "PostToolUse:format",
-        "Stop:typecheck",
-        "PreToolUse:protect-scoped-paths"
+        "Stop:typecheck+changed-tests",
+        "SessionStart(compact):sdlc-status"
       ],
       "branch_protection": true
     },
-    "source": "default",
-    "basis": "propose.py"
+    "source": "user",
+    "basis": "propose.py",
+    "unwritten": []
   }
 }

@@ -1,0 +1,5 @@
+interface:
+  display_name: "charmander-improve"
+  short_description: "Retro, incident, tune or scan; classify findings"
+policy:
+  allow_implicit_invocation: false

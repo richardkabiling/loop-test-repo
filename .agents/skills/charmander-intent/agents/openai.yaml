@@ -1,0 +1,5 @@
+interface:
+  display_name: "charmander-intent"
+  short_description: "Capture intent by interview; stop at the intent gate"
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,59 @@
+[
+  {
+    "id": "critical",
+    "match": [
+      "infra/**",
+      ".github/workflows/**",
+      "backend/**/serialization/**",
+      "backend/src/main/resources/db/**",
+      "api/openapi.yaml",
+      "backend/Dockerfile",
+      "backend/**/auth/**",
+      "frontend/src/**/auth/**"
+    ],
+    "human_approvals": 2,
+    "required_roles": [
+      "team-member (not the driver)"
+    ],
+    "ai": [
+      "lenses"
+    ],
+    "evidence": [
+      "terraform plan output for infra/",
+      "oasdiff breaking-change report for api/openapi.yaml"
+    ],
+    "why": "merge to main deploys infra, CI, persisted events, journal schema, public contract and auth",
+    "extra_lenses": [
+      "security",
+      "sre",
+      "data-integrity",
+      "backward-compat"
+    ]
+  },
+  {
+    "id": "standard",
+    "default": true,
+    "human_approvals": 1,
+    "required_roles": [
+      "team-member (not the driver)"
+    ],
+    "ai": [
+      "lenses"
+    ],
+    "why": "default tier"
+  },
+  {
+    "id": "low",
+    "match": [
+      "docs/ops/**",
+      "docs/work/**",
+      "docs/decisions/**",
+      "README.md",
+      "GLOSSARY.md"
+    ],
+    "human_approvals": 1,
+    "required_roles": [],
+    "ai": [],
+    "why": "docs-only changes (manuals, work items, ADRs, README, glossary); harness docs stay standard"
+  }
+]

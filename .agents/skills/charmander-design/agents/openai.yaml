@@ -1,0 +1,5 @@
+interface:
+  display_name: "charmander-design"
+  short_description: "Spec (EARS) plus design subphases; stop at the design gate"
+policy:
+  allow_implicit_invocation: false

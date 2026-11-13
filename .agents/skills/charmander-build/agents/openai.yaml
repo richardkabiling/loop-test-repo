@@ -1,0 +1,5 @@
+interface:
+  display_name: "charmander-build"
+  short_description: "Build-validate one ticket test-first, locally"
+policy:
+  allow_implicit_invocation: false

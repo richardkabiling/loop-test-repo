@@ -59,7 +59,8 @@
     },
     "wiring.ci": {
       "value": "none",
-      "source": "preset"
+      "source": "user",
+      "at": 1794538960
     },
     "start.mode": {
       "value": "guided",
@@ -163,6 +164,16 @@
       "value": "mattpocock family as shown; cross-cutting typescript-lsp, Metals MCP, context7, playwright, GitHub MCP, HashiCorp Terraform MCP, security-guidance",
       "source": "user",
       "at": 1794538806
+    },
+    "wiring.enforcement": {
+      "value": "as shown: lefthook; Claude hooks (protect paths, format, Stop typecheck + changed tests, post-compaction status); pr-checks.sh in /charmander-review; branch protection on main; docs locations docs/work, docs/decisions, GLOSSARY.md, docs/sdlc/research, docs/ops/{tech,business}",
+      "source": "user",
+      "at": 1794538960
+    },
+    "wiring.approve": {
+      "value": "write all; run Claude Code installs; generate human-setup.sh with wizard",
+      "source": "user",
+      "at": 1794539248
     }
   },
   "screens_done": [
@@ -170,6 +181,7 @@
     "team",
     "loop",
     "quality",
-    "conventions"
+    "conventions",
+    "wiring"
   ]
 }

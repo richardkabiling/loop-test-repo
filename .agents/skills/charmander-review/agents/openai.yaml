@@ -1,0 +1,5 @@
+interface:
+  display_name: "charmander-review"
+  short_description: "Open the PR, tier it, run checks, lenses and evals"
+policy:
+  allow_implicit_invocation: false
