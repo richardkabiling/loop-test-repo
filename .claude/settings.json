@@ -1,0 +1,13 @@
+{
+  "extraKnownMarketplaces": {
+    "sdlc-loop": {
+      "source": {
+        "source": "github",
+        "repo": "richardkabiling/creating-sdlc-loop"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "sdlc-loop@sdlc-loop": true
+  }
+}
