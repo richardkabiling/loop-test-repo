@@ -5,16 +5,18 @@
   "started": "2026-11-13T02:08:50Z",
   "answers": {
     "team.grilling": {
-      "value": "team",
-      "source": "preset"
+      "value": "solo (one person answers the interview live in the session)",
+      "source": "user",
+      "at": 1794536874
     },
     "loop.phases": {
       "value": "all seven",
       "source": "preset"
     },
     "loop.store": {
-      "value": "pr when there is a forge, otherwise files",
-      "source": "preset"
+      "value": "intent: attached to the GitHub epic issue AND committed to the repo (docs/work/<date>-<slug>/intent.md); design store asked on screen 3",
+      "source": "user",
+      "at": 1794536874
     },
     "loop.gates": {
       "value": "human after intent, design and review; automated elsewhere; discovered gates kept",
@@ -84,9 +86,40 @@
       "value": "adr -> infra (Terraform on AWS for the API's infrastructure) -> ci-cd -> api-image (backend container image, built in CI, pushed to a registry); adr -> db-schema; api-contract (OpenAPI YAML, contract-first) -> api -> web; docs: user-guide, tech-ops-manual, business-ops-manual; stakeholder-docs last",
       "source": "user",
       "at": 1794536552
+    },
+    "team.tools": {
+      "value": "claude-code, cursor, codex",
+      "source": "user",
+      "at": 1794536639
+    },
+    "team.harness": {
+      "value": "name: Charmander; prefix: charmander (/charmander, /charmander-intent, ... ; Codex $charmander)",
+      "source": "user",
+      "at": 1794536639
+    },
+    "team.roles": {
+      "value": "Everyone can do everything: every team member may hold any role (product owner, tech lead, designer, platform owner, code owner, security reviewer, release manager). A gate is approved by any team member other than the work item's author/driver; the authoring agent never approves.",
+      "source": "user",
+      "at": 1794536639
+    },
+    "team.tracker": {
+      "value": "GitHub Issues (gh CLI against origin); default labels needs-triage, ready-for-agent, ready-for-human",
+      "source": "user",
+      "at": 1794536639
+    },
+    "team.practices": {
+      "value": "none: use recommended defaults",
+      "source": "user",
+      "at": 1794536873
+    },
+    "team.unwritten": {
+      "value": "nothing yet (greenfield)",
+      "source": "user",
+      "at": 1794536874
     }
   },
   "screens_done": [
-    "repo"
+    "repo",
+    "team"
   ]
 }
