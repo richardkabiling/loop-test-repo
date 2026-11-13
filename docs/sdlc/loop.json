@@ -11,7 +11,7 @@
   },
   "discovery": {
     "mode": "greenfield",
-    "summary": "Greenfield monorepo: Scala + Apache Pekko API (sbt, Pekko Persistence on Postgres) in backend/, TypeScript + React + Vite web app (pnpm) in frontend/, OpenAPI contract between them, Terraform for the API's infrastructure in infra/, GitHub PRs + GitHub Actions, root justfile",
+    "summary": "Greenfield monorepo: Scala + Apache Pekko API (sbt, Pekko Persistence on Postgres) in backend/, TypeScript + React + Vite web app (pnpm) in frontend/, OpenAPI contract between them, Terraform on AWS for the API's infrastructure, backend container image in infra/, GitHub PRs + GitHub Actions, root justfile",
     "stack": [
       {
         "category": "lang",
@@ -73,8 +73,16 @@
       },
       {
         "category": "iac",
-        "tech": "terraform",
+        "tech": "terraform (aws provider)",
         "path": "infra/"
+      },
+      {
+        "category": "cloud",
+        "tech": "aws"
+      },
+      {
+        "category": "container",
+        "tech": "docker image for backend"
       }
     ],
     "commands": {
@@ -225,7 +233,7 @@
     {
       "id": "infra",
       "kind": "iac-terraform",
-      "path": "infra/",
+      "path": "infra/ (AWS)",
       "depends_on": [
         "adr"
       ],
@@ -316,6 +324,25 @@
       "basis": "setup-sdlc-deliverables/references/deliverables.md"
     },
     {
+      "id": "api-image",
+      "kind": "container-image",
+      "path": "backend/Dockerfile (or sbt-native-packager)",
+      "depends_on": [
+        "ci-cd",
+        "api"
+      ],
+      "design": {
+        "subphase": "infra",
+        "method": ""
+      },
+      "build": "",
+      "test": "",
+      "review": "",
+      "ship": "",
+      "source": "user",
+      "basis": "setup-sdlc-deliverables/references/deliverables.md"
+    },
+    {
       "id": "web",
       "kind": "web-app",
       "path": "frontend/",
@@ -358,6 +385,7 @@
       "path": "docs/ops/tech/",
       "depends_on": [
         "api",
+        "api-image",
         "infra",
         "ci-cd"
       ],

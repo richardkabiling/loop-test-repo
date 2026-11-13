@@ -81,10 +81,12 @@
       "at": 1794536133
     },
     "repo.deliverables": {
-      "value": "adr -> infra (Terraform for the API's infrastructure) -> ci-cd; adr -> db-schema; api-contract (OpenAPI YAML, contract-first) -> api -> web; docs: user-guide, tech-ops-manual (runbooks, deploy, incident, on-call), business-ops-manual (business processes, support, admin procedures); stakeholder-docs last",
+      "value": "adr -> infra (Terraform on AWS for the API's infrastructure) -> ci-cd -> api-image (backend container image, built in CI, pushed to a registry); adr -> db-schema; api-contract (OpenAPI YAML, contract-first) -> api -> web; docs: user-guide, tech-ops-manual, business-ops-manual; stakeholder-docs last",
       "source": "user",
-      "at": 1794536485
+      "at": 1794536552
     }
   },
-  "screens_done": []
+  "screens_done": [
+    "repo"
+  ]
 }
